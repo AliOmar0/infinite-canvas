@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import heroViewport from "@/assets/hero-viewport.jpg";
 import showcase1 from "@/assets/showcase-1.jpg";
 import showcase2 from "@/assets/showcase-2.jpg";
@@ -10,7 +10,6 @@ export const Route = createFileRoute("/")({
 const navLinks = [
   { label: "Engine", href: "#engine" },
   { label: "Showcase", href: "#showcase" },
-  { label: "Pricing", href: "#pricing" },
 ];
 
 const features = [
@@ -36,30 +35,6 @@ const showcase = [
   { src: showcase2, alt: "Volumetric environment 09 — atmospheric landscape", code: "VOLUMETRIC_ENV_09" },
 ];
 
-const tiers = [
-  {
-    name: "Starter",
-    price: "$0",
-    items: ["3 Active Projects", "Standard AI Textures", "720p Exports"],
-    cta: "Deploy",
-    featured: false,
-  },
-  {
-    name: "Professional",
-    price: "$49",
-    items: ["Unlimited Projects", "4K Lossless Rendering", "Priority GPU Queue", "Custom HDRI Uploads"],
-    cta: "Deploy Pro",
-    featured: true,
-  },
-  {
-    name: "Enterprise",
-    price: "$199",
-    items: ["Team Workspaces", "API Architecture Access", "Custom AI Training"],
-    cta: "Contact Sales",
-    featured: false,
-  },
-];
-
 function Index() {
   return (
     <div className="bg-background text-foreground font-display min-h-screen">
@@ -74,9 +49,9 @@ function Index() {
               </a>
             ))}
           </div>
-          <button className="px-4 py-1.5 bg-accent text-accent-foreground text-[11px] font-mono uppercase tracking-[0.2em] font-bold rounded-full hover:bg-accent/90 transition-colors">
-            Get Started
-          </button>
+          <Link to="/editor" className="px-4 py-1.5 bg-accent text-accent-foreground text-[11px] font-mono uppercase tracking-[0.2em] font-bold rounded-full hover:bg-accent/90 transition-colors">
+            Open Editor
+          </Link>
         </div>
       </nav>
 
@@ -96,9 +71,9 @@ function Index() {
               A high-performance creative engine for cinematic motion and AI-assisted 3D design. No installs.
             </p>
             <div className="flex flex-col md:flex-row gap-3 justify-center items-center animate-reveal [animation-delay:300ms]">
-              <button className="px-8 py-4 bg-accent text-accent-foreground font-bold rounded-sm text-xs uppercase tracking-[0.2em] hover:bg-accent/90 transition-colors">
+              <Link to="/editor" className="px-8 py-4 bg-accent text-accent-foreground font-bold rounded-sm text-xs uppercase tracking-[0.2em] hover:bg-accent/90 transition-colors">
                 Create New Scene
-              </button>
+              </Link>
               <button className="px-8 py-4 border border-border hover:bg-white/5 transition-colors font-bold rounded-sm text-xs uppercase tracking-[0.2em]">
                 Watch Showreel
               </button>
@@ -173,59 +148,21 @@ function Index() {
           </div>
         </section>
 
-        {/* Pricing */}
-        <section id="pricing" className="py-32 px-6 border-t border-border">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4">Membership</h2>
-              <p className="text-muted-foreground font-mono text-xs uppercase tracking-[0.2em]">
-                Scaling with your creative ambition
-              </p>
-            </div>
-            <div className="grid md:grid-cols-3 gap-1">
-              {tiers.map((t) => (
-                <div
-                  key={t.name}
-                  className={`p-8 flex flex-col items-start relative ${
-                    t.featured ? "border-2 border-accent bg-accent/5" : "border border-border"
-                  }`}
-                >
-                  {t.featured && (
-                    <div className="absolute top-0 right-0 bg-accent text-accent-foreground text-[9px] font-bold px-3 py-1 uppercase tracking-tight">
-                      Recommended
-                    </div>
-                  )}
-                  <span
-                    className={`font-mono text-[10px] mb-8 tracking-[0.2em] uppercase ${
-                      t.featured ? "text-accent" : "text-muted-foreground"
-                    }`}
-                  >
-                    {t.name}
-                  </span>
-                  <div className="text-4xl font-bold mb-6">{t.price}</div>
-                  <ul
-                    className={`space-y-3 mb-12 text-xs font-medium ${
-                      t.featured ? "text-foreground" : "text-muted-foreground"
-                    }`}
-                  >
-                    {t.items.map((i) => (
-                      <li key={i} className="flex items-center gap-2">
-                        <span className="opacity-60">—</span> {i}
-                      </li>
-                    ))}
-                  </ul>
-                  <button
-                    className={`w-full py-3 text-[10px] font-mono uppercase tracking-[0.2em] transition-colors ${
-                      t.featured
-                        ? "bg-accent text-accent-foreground font-bold hover:bg-accent/90"
-                        : "border border-border hover:bg-white/5"
-                    }`}
-                  >
-                    {t.cta}
-                  </button>
-                </div>
-              ))}
-            </div>
+        {/* Editor CTA */}
+        <section className="py-32 px-6 border-t border-border">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tighter mb-4">
+              Open the studio.
+            </h2>
+            <p className="text-muted-foreground text-sm md:text-base mb-10 text-pretty">
+              Real-time WebGL viewport. Add primitives, sculpt materials, light scenes — entirely in your browser.
+            </p>
+            <Link
+              to="/editor"
+              className="inline-block px-10 py-4 bg-accent text-accent-foreground font-bold rounded-sm text-xs uppercase tracking-[0.2em] hover:bg-accent/90 transition-colors"
+            >
+              Launch Editor
+            </Link>
           </div>
         </section>
       </main>

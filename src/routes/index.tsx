@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import heroViewport from "@/assets/hero-viewport.jpg";
 import showcase1 from "@/assets/showcase-1.jpg";
 import showcase2 from "@/assets/showcase-2.jpg";
@@ -10,7 +10,6 @@ export const Route = createFileRoute("/")({
 const navLinks = [
   { label: "Engine", href: "#engine" },
   { label: "Showcase", href: "#showcase" },
-  { label: "Pricing", href: "#pricing" },
 ];
 
 const features = [

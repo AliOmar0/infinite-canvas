@@ -122,18 +122,6 @@ function Index() {
           </div>
         </section>
 
-        {/* Showcase */}
-        <section id="showcase" className="py-32 bg-white/[0.02] border-t border-border">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="flex justify-between items-end mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tighter">Built in Infinite.</h2>
-              <a
-                href="#"
-                className="font-mono text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground transition-colors"
-              >
-                Browse Gallery
-              </a>
-            </div>
         {/* Templates */}
         <section id="showcase" className="py-32 bg-white/[0.02] border-t border-border">
           <div className="max-w-7xl mx-auto px-6">

@@ -33,9 +33,9 @@ function Primitive({ obj }: { obj: SceneObject }) {
     }
   })();
 
-  const mesh = (
+  const meshEl = (
     <mesh
-      ref={meshRef}
+      ref={setMesh}
       position={obj.position}
       rotation={obj.rotation}
       scale={obj.scale}
@@ -52,23 +52,22 @@ function Primitive({ obj }: { obj: SceneObject }) {
     </mesh>
   );
 
-  if (!isSelected || obj.type === "plane") return mesh;
+  if (!isSelected || obj.type === "plane") return meshEl;
 
   return (
     <>
-      {mesh}
-      {meshRef.current && (
+      {meshEl}
+      {mesh && (
         <TransformControls
-          object={meshRef.current}
+          object={mesh}
           mode="translate"
           size={0.7}
           onObjectChange={() => {
-            const m = meshRef.current;
-            if (!m) return;
+            if (!mesh) return;
             updateObject(obj.id, {
-              position: [m.position.x, m.position.y, m.position.z],
-              rotation: [m.rotation.x, m.rotation.y, m.rotation.z],
-              scale: [m.scale.x, m.scale.y, m.scale.z],
+              position: [mesh.position.x, mesh.position.y, mesh.position.z],
+              rotation: [mesh.rotation.x, mesh.rotation.y, mesh.rotation.z],
+              scale: [mesh.scale.x, mesh.scale.y, mesh.scale.z],
             });
           }}
         />

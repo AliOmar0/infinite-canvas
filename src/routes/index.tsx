@@ -1,7 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import heroViewport from "@/assets/hero-viewport.jpg";
 import showcase1 from "@/assets/showcase-1.jpg";
 import showcase2 from "@/assets/showcase-2.jpg";
+import { TEMPLATES } from "@/lib/templates";
+import { useEditor } from "@/lib/editor-store";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -36,6 +38,13 @@ const showcase = [
 ];
 
 function Index() {
+  const navigate = useNavigate();
+  const loadTemplate = useEditor((s) => s.loadTemplate);
+  const openTemplate = (id: string) => {
+    const t = TEMPLATES.find((x) => x.id === id);
+    if (t) loadTemplate(t);
+    navigate({ to: "/editor" });
+  };
   return (
     <div className="bg-background text-foreground font-display min-h-screen">
       {/* Navigation */}

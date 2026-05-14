@@ -7,6 +7,9 @@ import {
   PerspectiveCamera,
   Text3D,
   Center,
+  ContactShadows,
+  AccumulativeShadows,
+  RandomizedLight,
 } from "@react-three/drei";
 import {
   EffectComposer,
@@ -15,10 +18,49 @@ import {
   Vignette,
   Noise,
   Pixelation,
+  DepthOfField,
 } from "@react-three/postprocessing";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { SceneObject, useEditor } from "@/lib/editor-store";
+import { SceneObject, SceneLight, useEditor, ToneMapping } from "@/lib/editor-store";
+import { getTexture } from "@/lib/textures";
+
+const TONE_MAP: Record<ToneMapping, THREE.ToneMapping> = {
+  neutral: THREE.NeutralToneMapping,
+  aces: THREE.ACESFilmicToneMapping,
+  agx: THREE.AgXToneMapping,
+  cineon: THREE.CineonToneMapping,
+  linear: THREE.LinearToneMapping,
+};
+
+function Material({ obj }: { obj: SceneObject }) {
+  const map = useMemo(() => {
+    const t = getTexture(obj.texture);
+    if (!t) return null;
+    const c = t.clone();
+    c.needsUpdate = true;
+    c.repeat.set(obj.textureRepeat, obj.textureRepeat);
+    return c;
+  }, [obj.texture, obj.textureRepeat]);
+
+  return (
+    <meshPhysicalMaterial
+      color={obj.color}
+      metalness={obj.metalness}
+      roughness={obj.roughness}
+      emissive={obj.emissive}
+      emissiveIntensity={obj.emissiveIntensity}
+      clearcoat={obj.clearcoat}
+      clearcoatRoughness={obj.clearcoatRoughness}
+      transmission={obj.transmission}
+      ior={obj.ior}
+      thickness={obj.thickness}
+      envMapIntensity={obj.envMapIntensity}
+      map={map ?? undefined}
+      transparent={obj.transmission > 0}
+    />
+  );
+}
 
 function Primitive({ obj }: { obj: SceneObject }) {
   const meshRef = useRef<THREE.Mesh>(null);
@@ -29,14 +71,20 @@ function Primitive({ obj }: { obj: SceneObject }) {
   const updateObject = useEditor((s) => s.updateObject);
   const playing = useEditor((s) => s.playing);
   const isSelected = selectedId === obj.id;
+  const baseY = useRef(obj.position[1]);
 
-  useFrame((_, dt) => {
+  useEffect(() => { baseY.current = obj.position[1]; }, [obj.position]);
+
+  useFrame((state, dt) => {
     if (!playing) return;
     const target = groupRef.current ?? meshRef.current;
     if (!target) return;
     target.rotation.x += obj.spin[0] * dt;
     target.rotation.y += obj.spin[1] * dt;
     target.rotation.z += obj.spin[2] * dt;
+    if (obj.bob > 0) {
+      target.position.y = baseY.current + Math.sin(state.clock.elapsedTime * 1.5) * obj.bob;
+    }
   });
 
   const onClick = (e: ThreeEvent<MouseEvent>) => {
@@ -44,37 +92,18 @@ function Primitive({ obj }: { obj: SceneObject }) {
     selectObject(obj.id);
   };
 
-  const material = (
-    <meshStandardMaterial
-      color={obj.color}
-      metalness={obj.metalness}
-      roughness={obj.roughness}
-    />
-  );
-
   let body;
   if (obj.type === "text") {
     body = (
-      <group
-        ref={groupRef}
-        position={obj.position}
-        rotation={obj.rotation}
-        scale={obj.scale}
-        onClick={onClick}
-      >
+      <group ref={groupRef} position={obj.position} rotation={obj.rotation} scale={obj.scale} onClick={onClick}>
         <Center>
           <Text3D
             font="https://threejs.org/examples/fonts/helvetiker_bold.typeface.json"
-            size={0.8}
-            height={0.18}
-            curveSegments={12}
-            bevelEnabled
-            bevelThickness={0.02}
-            bevelSize={0.012}
-            bevelSegments={4}
+            size={0.8} height={0.18} curveSegments={12}
+            bevelEnabled bevelThickness={0.02} bevelSize={0.012} bevelSegments={4}
           >
             {obj.text || "TEXT"}
-            {material}
+            <Material obj={obj} />
           </Text3D>
         </Center>
       </group>
@@ -87,38 +116,36 @@ function Primitive({ obj }: { obj: SceneObject }) {
         case "cylinder": return <cylinderGeometry args={[0.5, 0.5, 1, 64]} />;
         case "cone": return <coneGeometry args={[0.5, 1, 64]} />;
         case "torus": return <torusGeometry args={[0.5, 0.18, 32, 96]} />;
+        case "torusKnot": return <torusKnotGeometry args={[0.4, 0.14, 128, 24]} />;
+        case "icosahedron": return <icosahedronGeometry args={[0.6, 1]} />;
+        case "octahedron": return <octahedronGeometry args={[0.6, 0]} />;
+        case "dodecahedron": return <dodecahedronGeometry args={[0.6, 0]} />;
         case "plane": return <planeGeometry args={[1, 1]} />;
       }
     })();
     body = (
       <mesh
         ref={(m) => { meshRef.current = m; setMesh(m); }}
-        position={obj.position}
-        rotation={obj.rotation}
-        scale={obj.scale}
+        position={obj.position} rotation={obj.rotation} scale={obj.scale}
         onClick={onClick}
-        castShadow
-        receiveShadow
+        castShadow={obj.castShadow}
+        receiveShadow={obj.receiveShadow}
       >
         {geometry}
-        {material}
+        <Material obj={obj} />
       </mesh>
     );
   }
 
   if (!isSelected || obj.type === "plane") return body;
 
-  // Use the appropriate target for transform controls
   const transformTarget = obj.type === "text" ? groupRef.current : mesh;
-
   return (
     <>
       {body}
       {transformTarget && (
         <TransformControls
-          object={transformTarget}
-          mode="translate"
-          size={0.7}
+          object={transformTarget} mode="translate" size={0.7}
           onObjectChange={() => {
             if (!transformTarget) return;
             updateObject(obj.id, {
@@ -130,6 +157,51 @@ function Primitive({ obj }: { obj: SceneObject }) {
         />
       )}
     </>
+  );
+}
+
+function Light({ light }: { light: SceneLight }) {
+  if (light.type === "ambient") {
+    return <ambientLight color={light.color} intensity={light.intensity} />;
+  }
+  if (light.type === "directional") {
+    return (
+      <directionalLight
+        position={light.position}
+        color={light.color}
+        intensity={light.intensity}
+        castShadow={light.castShadow}
+        shadow-mapSize={[2048, 2048]}
+        shadow-camera-left={-10}
+        shadow-camera-right={10}
+        shadow-camera-top={10}
+        shadow-camera-bottom={-10}
+      />
+    );
+  }
+  if (light.type === "point") {
+    return (
+      <pointLight
+        position={light.position}
+        color={light.color}
+        intensity={light.intensity}
+        distance={light.distance ?? 0}
+        decay={light.decay ?? 1}
+        castShadow={light.castShadow}
+      />
+    );
+  }
+  return (
+    <spotLight
+      position={light.position}
+      color={light.color}
+      intensity={light.intensity}
+      angle={light.angle ?? Math.PI / 6}
+      penumbra={light.penumbra ?? 0.3}
+      distance={light.distance ?? 0}
+      decay={light.decay ?? 1}
+      castShadow={light.castShadow}
+    />
   );
 }
 
@@ -147,19 +219,33 @@ function ScreenshotBridge() {
   return null;
 }
 
+function Tonemap() {
+  const { gl } = useThree();
+  const toneMapping = useEditor((s) => s.toneMapping);
+  const exposure = useEditor((s) => s.exposure);
+  useEffect(() => {
+    gl.toneMapping = TONE_MAP[toneMapping];
+    gl.toneMappingExposure = exposure;
+  }, [gl, toneMapping, exposure]);
+  return null;
+}
+
 export function Viewport() {
   const objects = useEditor((s) => s.objects);
+  const lights = useEditor((s) => s.lights);
   const environment = useEditor((s) => s.environment);
+  const envIntensity = useEditor((s) => s.envIntensity);
   const showGrid = useEditor((s) => s.showGrid);
+  const showShadows = useEditor((s) => s.showShadows);
   const background = useEditor((s) => s.background);
   const fx = useEditor((s) => s.fx);
   const selectObject = useEditor((s) => s.selectObject);
 
-  const enabledFx = fx.bloom || fx.chromatic || fx.vignette || fx.noise || fx.pixelate;
+  const enabledFx = fx.bloom || fx.chromatic || fx.vignette || fx.noise || fx.pixelate || fx.dof;
 
   return (
     <Canvas
-      shadows
+      shadows={showShadows}
       dpr={[1, 2]}
       gl={{ antialias: true, preserveDrawingBuffer: true }}
       onPointerMissed={() => selectObject(null)}
@@ -167,15 +253,10 @@ export function Viewport() {
       <color attach="background" args={[background]} />
       <PerspectiveCamera makeDefault position={[5, 4, 6]} fov={45} />
       <ScreenshotBridge />
+      <Tonemap />
       <Suspense fallback={null}>
-        <Environment preset={environment} background={false} />
-        <ambientLight intensity={0.25} />
-        <directionalLight
-          position={[5, 8, 4]}
-          intensity={1.2}
-          castShadow
-          shadow-mapSize={[2048, 2048]}
-        />
+        <Environment preset={environment} background={false} environmentIntensity={envIntensity} />
+        {lights.map((l) => <Light key={l.id} light={l} />)}
         {showGrid && (
           <Grid
             args={[40, 40]}
@@ -187,9 +268,10 @@ export function Viewport() {
             position={[0, 0.001, 0]}
           />
         )}
-        {objects.map((o) => (
-          <Primitive key={o.id} obj={o} />
-        ))}
+        {showShadows && (
+          <ContactShadows position={[0, 0.005, 0]} opacity={0.5} scale={30} blur={2.5} far={10} />
+        )}
+        {objects.map((o) => <Primitive key={o.id} obj={o} />)}
 
         {enabledFx && (
           <EffectComposer>
@@ -199,6 +281,9 @@ export function Viewport() {
               )}
               {fx.chromatic && (
                 <ChromaticAberration offset={new THREE.Vector2(fx.chromaticOffset, fx.chromaticOffset)} radialModulation={false} modulationOffset={0} />
+              )}
+              {fx.dof && (
+                <DepthOfField focusDistance={fx.dofFocus / 100} focalLength={0.05} bokehScale={fx.dofBokeh} />
               )}
               {fx.pixelate && <Pixelation granularity={fx.pixelSize} />}
               {fx.noise && <Noise opacity={fx.noiseOpacity} />}

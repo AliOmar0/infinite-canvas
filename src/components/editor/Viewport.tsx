@@ -52,27 +52,28 @@ function Primitive({ obj }: { obj: SceneObject }) {
     </mesh>
   );
 
-  if (!isSelected || obj.type === "plane" || !meshRef.current) {
-    if (!isSelected || obj.type === "plane") return mesh;
-  }
+  if (!isSelected || obj.type === "plane") return mesh;
 
   return (
-    <TransformControls
-      object={meshRef.current ?? undefined}
-      mode="translate"
-      size={0.7}
-      onObjectChange={() => {
-        const m = meshRef.current;
-        if (!m) return;
-        updateObject(obj.id, {
-          position: [m.position.x, m.position.y, m.position.z],
-          rotation: [m.rotation.x, m.rotation.y, m.rotation.z],
-          scale: [m.scale.x, m.scale.y, m.scale.z],
-        });
-      }}
-    >
+    <>
       {mesh}
-    </TransformControls>
+      {meshRef.current && (
+        <TransformControls
+          object={meshRef.current}
+          mode="translate"
+          size={0.7}
+          onObjectChange={() => {
+            const m = meshRef.current;
+            if (!m) return;
+            updateObject(obj.id, {
+              position: [m.position.x, m.position.y, m.position.z],
+              rotation: [m.rotation.x, m.rotation.y, m.rotation.z],
+              scale: [m.scale.x, m.scale.y, m.scale.z],
+            });
+          }}
+        />
+      )}
+    </>
   );
 }
 

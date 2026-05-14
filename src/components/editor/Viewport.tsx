@@ -52,11 +52,13 @@ function Primitive({ obj }: { obj: SceneObject }) {
     </mesh>
   );
 
-  if (!isSelected || obj.type === "plane") return mesh;
+  if (!isSelected || obj.type === "plane" || !meshRef.current) {
+    if (!isSelected || obj.type === "plane") return mesh;
+  }
 
   return (
     <TransformControls
-      object={meshRef}
+      object={meshRef.current ?? undefined}
       mode="translate"
       size={0.7}
       onObjectChange={() => {

@@ -35,30 +35,6 @@ const showcase = [
   { src: showcase2, alt: "Volumetric environment 09 — atmospheric landscape", code: "VOLUMETRIC_ENV_09" },
 ];
 
-const tiers = [
-  {
-    name: "Starter",
-    price: "$0",
-    items: ["3 Active Projects", "Standard AI Textures", "720p Exports"],
-    cta: "Deploy",
-    featured: false,
-  },
-  {
-    name: "Professional",
-    price: "$49",
-    items: ["Unlimited Projects", "4K Lossless Rendering", "Priority GPU Queue", "Custom HDRI Uploads"],
-    cta: "Deploy Pro",
-    featured: true,
-  },
-  {
-    name: "Enterprise",
-    price: "$199",
-    items: ["Team Workspaces", "API Architecture Access", "Custom AI Training"],
-    cta: "Contact Sales",
-    featured: false,
-  },
-];
-
 function Index() {
   return (
     <div className="bg-background text-foreground font-display min-h-screen">

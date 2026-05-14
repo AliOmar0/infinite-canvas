@@ -1,5 +1,5 @@
-import { Box, Circle, Cylinder, Triangle, Trash2, Copy, Plus, Type } from "lucide-react";
-import { useEditor, PrimitiveType } from "@/lib/editor-store";
+import { Box, Circle, Cylinder, Triangle, Trash2, Copy, Type, Hexagon, Diamond, Sparkles, Square, Lightbulb, Sun, Zap, Flashlight } from "lucide-react";
+import { useEditor, PrimitiveType, LightType } from "@/lib/editor-store";
 import { cn } from "@/lib/utils";
 
 const icons: Record<PrimitiveType, typeof Box> = {
@@ -8,11 +8,23 @@ const icons: Record<PrimitiveType, typeof Box> = {
   cylinder: Cylinder,
   cone: Triangle,
   torus: Circle,
-  plane: Box,
+  torusKnot: Sparkles,
+  icosahedron: Diamond,
+  octahedron: Diamond,
+  dodecahedron: Hexagon,
+  plane: Square,
   text: Type,
 };
 
-const primitives: PrimitiveType[] = ["box", "sphere", "cylinder", "cone", "torus", "plane", "text"];
+const lightIcons: Record<LightType, typeof Box> = {
+  ambient: Lightbulb,
+  directional: Sun,
+  point: Zap,
+  spot: Flashlight,
+};
+
+const primitives: PrimitiveType[] = ["box", "sphere", "cylinder", "cone", "torus", "torusKnot", "icosahedron", "octahedron", "dodecahedron", "plane", "text"];
+const lightTypes: LightType[] = ["directional", "point", "spot", "ambient"];
 
 export function SceneTree() {
   const objects = useEditor((s) => s.objects);

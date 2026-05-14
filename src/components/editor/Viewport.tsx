@@ -6,12 +6,12 @@ import {
   TransformControls,
   PerspectiveCamera,
 } from "@react-three/drei";
-import { Suspense, useRef } from "react";
+import { Suspense, useState } from "react";
 import * as THREE from "three";
 import { SceneObject, useEditor } from "@/lib/editor-store";
 
 function Primitive({ obj }: { obj: SceneObject }) {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const [mesh, setMesh] = useState<THREE.Mesh | null>(null);
   const selectedId = useEditor((s) => s.selectedId);
   const selectObject = useEditor((s) => s.selectObject);
   const updateObject = useEditor((s) => s.updateObject);

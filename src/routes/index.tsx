@@ -49,9 +49,9 @@ function Index() {
               </a>
             ))}
           </div>
-          <button className="px-4 py-1.5 bg-accent text-accent-foreground text-[11px] font-mono uppercase tracking-[0.2em] font-bold rounded-full hover:bg-accent/90 transition-colors">
-            Get Started
-          </button>
+          <Link to="/editor" className="px-4 py-1.5 bg-accent text-accent-foreground text-[11px] font-mono uppercase tracking-[0.2em] font-bold rounded-full hover:bg-accent/90 transition-colors">
+            Open Editor
+          </Link>
         </div>
       </nav>
 
@@ -71,9 +71,9 @@ function Index() {
               A high-performance creative engine for cinematic motion and AI-assisted 3D design. No installs.
             </p>
             <div className="flex flex-col md:flex-row gap-3 justify-center items-center animate-reveal [animation-delay:300ms]">
-              <button className="px-8 py-4 bg-accent text-accent-foreground font-bold rounded-sm text-xs uppercase tracking-[0.2em] hover:bg-accent/90 transition-colors">
+              <Link to="/editor" className="px-8 py-4 bg-accent text-accent-foreground font-bold rounded-sm text-xs uppercase tracking-[0.2em] hover:bg-accent/90 transition-colors">
                 Create New Scene
-              </button>
+              </Link>
               <button className="px-8 py-4 border border-border hover:bg-white/5 transition-colors font-bold rounded-sm text-xs uppercase tracking-[0.2em]">
                 Watch Showreel
               </button>

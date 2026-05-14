@@ -198,7 +198,7 @@ export function Viewport() {
                 <Bloom intensity={fx.bloomIntensity} luminanceThreshold={0.2} luminanceSmoothing={0.9} mipmapBlur />
               )}
               {fx.chromatic && (
-                <ChromaticAberration offset={[fx.chromaticOffset, fx.chromaticOffset] as unknown as THREE.Vector2} radialModulation={false} modulationOffset={0} />
+                <ChromaticAberration offset={new THREE.Vector2(fx.chromaticOffset, fx.chromaticOffset)} radialModulation={false} modulationOffset={0} />
               )}
               {fx.pixelate && <Pixelation granularity={fx.pixelSize} />}
               {fx.noise && <Noise opacity={fx.noiseOpacity} />}

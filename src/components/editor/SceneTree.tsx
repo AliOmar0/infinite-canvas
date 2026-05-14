@@ -1,4 +1,4 @@
-import { Box, Circle, Cylinder, Triangle, Trash2, Copy, Plus } from "lucide-react";
+import { Box, Circle, Cylinder, Triangle, Trash2, Copy, Plus, Type } from "lucide-react";
 import { useEditor, PrimitiveType } from "@/lib/editor-store";
 import { cn } from "@/lib/utils";
 
@@ -9,9 +9,10 @@ const icons: Record<PrimitiveType, typeof Box> = {
   cone: Triangle,
   torus: Circle,
   plane: Box,
+  text: Type,
 };
 
-const primitives: PrimitiveType[] = ["box", "sphere", "cylinder", "cone", "torus", "plane"];
+const primitives: PrimitiveType[] = ["box", "sphere", "cylinder", "cone", "torus", "plane", "text"];
 
 export function SceneTree() {
   const objects = useEditor((s) => s.objects);
@@ -28,17 +29,20 @@ export function SceneTree() {
           Add Primitive
         </div>
         <div className="grid grid-cols-3 gap-1">
-          {primitives.map((p) => (
-            <button
-              key={p}
-              onClick={() => addObject(p)}
-              className="flex flex-col items-center gap-1 py-2 border border-border hover:bg-white/5 hover:border-white/20 transition-colors rounded-sm"
-              title={`Add ${p}`}
-            >
-              <Plus className="size-3 text-muted-foreground" />
-              <span className="font-mono text-[9px] uppercase tracking-wider">{p}</span>
-            </button>
-          ))}
+          {primitives.map((p) => {
+            const Icon = icons[p];
+            return (
+              <button
+                key={p}
+                onClick={() => addObject(p)}
+                className="flex flex-col items-center gap-1 py-2 border border-border hover:bg-white/5 hover:border-white/20 transition-colors rounded-sm"
+                title={`Add ${p}`}
+              >
+                <Icon className="size-3 text-muted-foreground" />
+                <span className="font-mono text-[9px] uppercase tracking-wider">{p}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -67,20 +71,14 @@ export function SceneTree() {
               <Icon className="size-3 shrink-0" />
               <span className="truncate flex-1">{o.name}</span>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  duplicateObject(o.id);
-                }}
+                onClick={(e) => { e.stopPropagation(); duplicateObject(o.id); }}
                 className="opacity-0 group-hover:opacity-100 hover:text-foreground"
                 title="Duplicate"
               >
                 <Copy className="size-3" />
               </button>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeObject(o.id);
-                }}
+                onClick={(e) => { e.stopPropagation(); removeObject(o.id); }}
                 className="opacity-0 group-hover:opacity-100 hover:text-red-400"
                 title="Delete"
               >

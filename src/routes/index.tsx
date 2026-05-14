@@ -1,7 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import heroViewport from "@/assets/hero-viewport.jpg";
 import showcase1 from "@/assets/showcase-1.jpg";
 import showcase2 from "@/assets/showcase-2.jpg";
+import { TEMPLATES } from "@/lib/templates";
+import { useEditor } from "@/lib/editor-store";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -36,6 +38,13 @@ const showcase = [
 ];
 
 function Index() {
+  const navigate = useNavigate();
+  const loadTemplate = useEditor((s) => s.loadTemplate);
+  const openTemplate = (id: string) => {
+    const t = TEMPLATES.find((x) => x.id === id);
+    if (t) loadTemplate(t);
+    navigate({ to: "/editor" });
+  };
   return (
     <div className="bg-background text-foreground font-display min-h-screen">
       {/* Navigation */}
@@ -113,35 +122,53 @@ function Index() {
           </div>
         </section>
 
-        {/* Showcase */}
+        {/* Templates */}
         <section id="showcase" className="py-32 bg-white/[0.02] border-t border-border">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="flex justify-between items-end mb-12">
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tighter">Built in Infinite.</h2>
-              <a
-                href="#"
-                className="font-mono text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground transition-colors"
-              >
-                Browse Gallery
-              </a>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+              <div>
+                <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-3">[02] Templates</div>
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tighter">Ready to remix.</h2>
+              </div>
+              <p className="text-muted-foreground text-sm max-w-sm">
+                Curated 3D scenes with materials, post-FX and animation. One click loads them in the editor.
+              </p>
             </div>
-            <div className="grid md:grid-cols-2 gap-6">
-              {showcase.map((s) => (
-                <figure
-                  key={s.code}
-                  className="relative aspect-[4/3] bg-card ring-1 ring-white/5 rounded-lg overflow-hidden group"
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {TEMPLATES.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => openTemplate(t.id)}
+                  className="group text-left rounded-md overflow-hidden border border-border hover:border-white/30 transition-all hover:-translate-y-0.5"
                 >
-                  <img
-                    src={s.src}
-                    alt={s.alt}
-                    width={1280}
-                    height={960}
-                    loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                  />
-                  <figcaption className="absolute bottom-3 left-4 text-[10px] font-mono text-foreground/70 tracking-[0.2em]">
-                    {s.code}
-                  </figcaption>
+                  <div className="aspect-[4/3] relative overflow-hidden" style={{ background: t.background }}>
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/40" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="font-mono text-sm md:text-base uppercase tracking-[0.25em] text-white/85 mix-blend-difference">
+                        {t.name}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="px-3 py-3 bg-card flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-bold">{t.name}</div>
+                      <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground mt-1">
+                        {t.tags.join(" · ")}
+                      </div>
+                    </div>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground transition-colors">
+                      OPEN →
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-16 grid md:grid-cols-2 gap-6">
+              {showcase.map((s) => (
+                <figure key={s.code} className="relative aspect-[4/3] bg-card ring-1 ring-white/5 rounded-lg overflow-hidden group">
+                  <img src={s.src} alt={s.alt} width={1280} height={960} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
+                  <figcaption className="absolute bottom-3 left-4 text-[10px] font-mono text-foreground/70 tracking-[0.2em]">{s.code}</figcaption>
                 </figure>
               ))}
             </div>

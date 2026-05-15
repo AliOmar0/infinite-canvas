@@ -206,11 +206,11 @@ function EditorPage() {
           )}
 
           {showShortcuts && (
-            <div role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" className="absolute inset-0 bg-background/95 backdrop-blur-sm z-30 flex items-center justify-center p-8 animate-fade-in">
-              <div className="max-w-md w-full bg-card border border-border rounded-md p-6">
+            <div role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" className="absolute inset-0 bg-background/60 backdrop-blur-2xl z-30 flex items-center justify-center p-8 animate-fade-in">
+              <div className="max-w-md w-full liquid-glass-strong rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="font-mono text-xs uppercase tracking-[0.3em]">Shortcuts</h2>
-                  <button onClick={() => setShowShortcuts(false)} aria-label="Close" className="p-1.5 hover:bg-white/5 rounded-sm">
+                  <button onClick={() => setShowShortcuts(false)} aria-label="Close" className="p-2 glass-pill rounded-full hover:bg-white/10">
                     <X className="size-3.5" />
                   </button>
                 </div>

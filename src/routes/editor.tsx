@@ -198,7 +198,7 @@ function EditorPage() {
       </header>
 
       <div className="flex-1 min-h-0 relative p-2 pt-2">
-        <PanelGroup orientation="horizontal" id="infinite-studio-v3" defaultLayout={{ left: 22, center: 56, right: 22 }} className="flex h-full w-full gap-1.5">
+        <PanelGroup orientation="horizontal" id="infinite-studio-v4" className="flex h-full w-full">
           <Panel
             panelRef={leftRef}
             id="left"

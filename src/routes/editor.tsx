@@ -275,7 +275,11 @@ function EditorPage() {
           )}
         </main>
 
-        <aside className="w-72 shrink-0 rounded-xl liquid-glass overflow-hidden" aria-label="Properties panel">
+        <aside
+          className={`shrink-0 rounded-xl liquid-glass overflow-hidden transition-[width,opacity,margin] duration-300 ease-out ${rightOpen ? "w-72 opacity-100" : "w-0 opacity-0 -mr-2 pointer-events-none"}`}
+          aria-label="Properties panel"
+          aria-hidden={!rightOpen}
+        >
           <Properties />
         </aside>
       </div>

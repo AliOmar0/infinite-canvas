@@ -30,9 +30,9 @@ export function SceneTree() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="px-4 py-3 border-b border-border">
-        <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-3">
-          Add Geometry
+      <div className="px-4 py-3 border-b border-white/5">
+        <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-foreground/50 mb-3 flex items-center gap-2">
+          <span className="size-1 rounded-full bg-accent/70" /> Add Geometry
         </div>
         <div className="grid grid-cols-3 gap-1">
           {primitives.map((p) => {

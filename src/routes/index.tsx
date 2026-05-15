@@ -149,8 +149,8 @@ function Index() {
               { k: "10", v: "HDRI Envs" },
               { k: "6", v: "Post-FX" },
             ].map((m) => (
-              <div key={m.v} className="border border-border rounded-md p-4 text-center bg-card/40">
-                <div className="text-2xl md:text-3xl font-extrabold tracking-tighter">{m.k}</div>
+              <div key={m.v} className="liquid-glass rounded-xl p-4 text-center">
+                <div className="text-2xl md:text-3xl font-extrabold tracking-tighter text-aurora">{m.k}</div>
                 <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mt-1">{m.v}</div>
               </div>
             ))}

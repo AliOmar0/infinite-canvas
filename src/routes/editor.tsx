@@ -46,16 +46,26 @@ function EditorPage() {
   const [rightCollapsed, setRightCollapsed] = useState(false);
   const focusMode = leftCollapsed && rightCollapsed;
 
-  // Clear any stale persisted layout from older builds (was leaving panels stuck collapsed)
-  useEffect(() => {
+  // Clear stale persisted panel layouts BEFORE the library reads them on first render
+  useState(() => {
+    if (typeof window === "undefined") return null;
     try {
       Object.keys(localStorage)
-        .filter((k) => k.includes("infinite-studio") || k.includes("react-resizable-panels"))
+        .filter((k) => k.toLowerCase().includes("panel") || k.includes("infinite-studio"))
         .forEach((k) => localStorage.removeItem(k));
     } catch { /* ignore */ }
+    return null;
+  });
+
+  // Backup: force panels to sane sizes on mount
+  useEffect(() => {
     const id = requestAnimationFrame(() => {
-      leftRef.current?.expand();
-      rightRef.current?.expand();
+      try {
+        leftRef.current?.expand();
+        rightRef.current?.expand();
+        leftRef.current?.resize(22);
+        rightRef.current?.resize(22);
+      } catch { /* ignore */ }
       setLeftCollapsed(false);
       setRightCollapsed(false);
     });

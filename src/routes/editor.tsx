@@ -46,6 +46,17 @@ function EditorPage() {
   const [rightCollapsed, setRightCollapsed] = useState(false);
   const focusMode = leftCollapsed && rightCollapsed;
 
+  // Force expand panels on mount (library can persist collapsed state across reloads)
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      leftRef.current?.expand();
+      rightRef.current?.expand();
+      setLeftCollapsed(false);
+      setRightCollapsed(false);
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
+
   const flash = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 1800);

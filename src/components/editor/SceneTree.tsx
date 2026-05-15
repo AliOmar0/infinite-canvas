@@ -90,8 +90,10 @@ export function SceneTree() {
               key={o.id}
               onClick={() => selectObject(o.id)}
               className={cn(
-                "group flex items-center gap-2 px-4 py-1.5 cursor-pointer text-xs font-mono transition-colors",
-                active ? "bg-white/10 text-foreground" : "text-muted-foreground hover:bg-white/5",
+                "group relative flex items-center gap-2 mx-2 my-0.5 px-2.5 py-1.5 rounded-md cursor-pointer text-[11px] font-mono tracking-wide transition-all",
+                active
+                  ? "bg-gradient-to-r from-accent/20 to-transparent text-foreground ring-1 ring-accent/30 shadow-[inset_2px_0_0_0_var(--accent)]"
+                  : "text-foreground/55 hover:text-foreground hover:bg-white/[0.04]",
               )}
             >
               <Icon className="size-3 shrink-0" aria-hidden />

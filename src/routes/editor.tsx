@@ -46,32 +46,6 @@ function EditorPage() {
   const [rightCollapsed, setRightCollapsed] = useState(false);
   const focusMode = leftCollapsed && rightCollapsed;
 
-  // Clear stale persisted panel layouts BEFORE the library reads them on first render
-  useState(() => {
-    if (typeof window === "undefined") return null;
-    try {
-      Object.keys(localStorage)
-        .filter((k) => k.toLowerCase().includes("panel") || k.includes("infinite-studio"))
-        .forEach((k) => localStorage.removeItem(k));
-    } catch { /* ignore */ }
-    return null;
-  });
-
-  // Backup: force panels to sane sizes on mount
-  useEffect(() => {
-    const id = requestAnimationFrame(() => {
-      try {
-        leftRef.current?.expand();
-        rightRef.current?.expand();
-        leftRef.current?.resize(22);
-        rightRef.current?.resize(22);
-      } catch { /* ignore */ }
-      setLeftCollapsed(false);
-      setRightCollapsed(false);
-    });
-    return () => cancelAnimationFrame(id);
-  }, []);
-
   const flash = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 1800);
@@ -224,11 +198,11 @@ function EditorPage() {
       </header>
 
       <div className="flex-1 min-h-0 relative p-2 pt-2">
-        <PanelGroup orientation="horizontal" id="infinite-studio-v3" defaultLayout={{ left: 22, center: 56, right: 22 }} className="flex h-full w-full gap-1.5">
+        <PanelGroup orientation="horizontal" id="infinite-studio-v4" className="flex h-full w-full">
           <Panel
             panelRef={leftRef}
             id="left"
-            defaultSize={20}
+            defaultSize={22}
             minSize={14}
             maxSize={34}
             collapsible
@@ -238,7 +212,7 @@ function EditorPage() {
             <div className="h-full w-full overflow-hidden"><SceneTree /></div>
           </Panel>
           <ResizeHandle hidden={leftCollapsed} />
-          <Panel id="center" minSize={30} className="relative">
+          <Panel id="center" defaultSize={56} minSize={30} className="relative">
             <main id="viewport-region" className="absolute inset-0 bg-card rounded-xl overflow-hidden border border-border" aria-label="3D viewport">
               <Viewport />
               <div className="absolute top-3 left-4 font-mono text-[10px] tracking-[0.2em] text-foreground/60 pointer-events-none select-none px-2 py-1 rounded glass-pill">
@@ -323,7 +297,7 @@ function EditorPage() {
           <Panel
             panelRef={rightRef}
             id="right"
-            defaultSize={20}
+            defaultSize={22}
             minSize={16}
             maxSize={34}
             collapsible

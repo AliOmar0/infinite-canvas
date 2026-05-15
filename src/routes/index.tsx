@@ -93,13 +93,15 @@ function Index() {
 
       <main id="main">
         {/* Hero */}
-        <section className="relative pt-36 pb-20 px-6 overflow-hidden">
-          <div className="max-w-5xl mx-auto text-center">
-            <div className="inline-block font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-6 animate-reveal [animation-delay:100ms]">
-              Browser-Native 3D Engine · v0.4
+        <section className="relative pt-36 pb-20 px-6 overflow-hidden grain">
+          <div className="aurora-bg" aria-hidden />
+          <div className="grid-bg" aria-hidden />
+          <div className="relative max-w-5xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-6 animate-reveal [animation-delay:100ms] px-3 py-1 rounded-full border border-border bg-background/40 backdrop-blur">
+              <span className="size-1.5 rounded-full bg-accent animate-pulse-glow" /> Browser-Native 3D Engine · v0.4
             </div>
             <h1 className="text-5xl sm:text-6xl md:text-8xl font-extrabold tracking-tighter text-balance mb-8 animate-reveal [animation-delay:200ms] leading-[0.95]">
-              Infinite <span className="text-muted-foreground">Depth.</span>
+              <span className="text-aurora">Infinite Depth.</span>
               <br />
               Browser Native.
             </h1>

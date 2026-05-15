@@ -340,11 +340,11 @@ function IconBtn({ children, ...rest }: React.ButtonHTMLAttributes<HTMLButtonEle
   );
 }
 
-function ResizeHandle({ hidden }: { hidden?: boolean }) {
+function ResizeHandle({ hidden, label }: { hidden?: boolean; label: string }) {
   if (hidden) return null;
   return (
-    <PanelResizeHandle className="group relative flex w-3 shrink-0 cursor-col-resize items-center justify-center self-stretch hover:bg-white/[0.04] transition-colors">
-      <div className="h-16 w-[3px] rounded-full bg-white/15 group-hover:bg-accent/80 transition-colors flex items-center justify-center">
+    <PanelResizeHandle aria-label={label} className="group relative flex w-5 shrink-0 cursor-col-resize touch-none items-center justify-center self-stretch rounded-lg hover:bg-white/[0.04] transition-colors">
+      <div className="h-16 w-1 rounded-full bg-white/15 group-hover:bg-accent/80 group-data-[separator=active]:bg-accent transition-colors flex items-center justify-center">
         <GripVertical className="size-3 text-foreground/0 group-hover:text-foreground/80 transition-colors" />
       </div>
     </PanelResizeHandle>

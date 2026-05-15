@@ -348,9 +348,9 @@ function IconBtn({ children, ...rest }: React.ButtonHTMLAttributes<HTMLButtonEle
 function ResizeHandle({ hidden }: { hidden?: boolean }) {
   if (hidden) return null;
   return (
-    <PanelResizeHandle className="group relative flex w-2 items-center justify-center">
-      <div className="h-12 w-1 rounded-full bg-white/10 group-hover:bg-accent/60 transition-colors flex items-center justify-center">
-        <GripVertical className="size-3 text-white/40 group-hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+    <PanelResizeHandle className="group relative flex w-3 shrink-0 cursor-col-resize items-center justify-center self-stretch hover:bg-white/[0.04] transition-colors">
+      <div className="h-16 w-[3px] rounded-full bg-white/15 group-hover:bg-accent/80 transition-colors flex items-center justify-center">
+        <GripVertical className="size-3 text-foreground/0 group-hover:text-foreground/80 transition-colors" />
       </div>
     </PanelResizeHandle>
   );

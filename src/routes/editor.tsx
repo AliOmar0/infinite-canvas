@@ -209,18 +209,18 @@ function EditorPage() {
       </header>
 
       <div className="flex-1 min-h-0 relative p-2 pt-2">
-        <PanelGroup orientation="horizontal" id="infinite-studio-layout" className="gap-2 flex h-full w-full">
+        <PanelGroup orientation="horizontal" id="infinite-studio-layout" className="flex h-full w-full gap-1.5">
           <Panel
             panelRef={leftRef}
             id="left"
-            defaultSize={18}
+            defaultSize={20}
             minSize={14}
-            maxSize={32}
+            maxSize={34}
             collapsible
             collapsedSize={0}
             className="rounded-xl liquid-glass overflow-hidden"
           >
-            <div className="h-full min-w-[14rem]"><SceneTree /></div>
+            <div className="h-full w-full overflow-hidden"><SceneTree /></div>
           </Panel>
           <ResizeHandle hidden={leftCollapsed} />
           <Panel id="center" minSize={30} className="relative">

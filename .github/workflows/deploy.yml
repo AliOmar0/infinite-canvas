@@ -36,7 +36,7 @@ jobs:
         env:
           # Repo served from https://<user>.github.io/infinite-canvas/
           BASE_PATH: /infinite-canvas/
-        run: bun run build
+        run: bun run build:github-pages
 
       - name: Add SPA fallback (404 -> index)
         run: |

@@ -145,7 +145,7 @@ function EditorPage() {
           </div>
 
           {showTemplates && (
-            <div role="dialog" aria-modal="true" aria-label="Templates" className="absolute inset-0 bg-background/95 backdrop-blur-sm z-30 overflow-y-auto p-8 animate-fade-in">
+            <div role="dialog" aria-modal="true" aria-label="Templates" className="absolute inset-0 bg-background/70 backdrop-blur-2xl z-30 overflow-y-auto p-8 animate-fade-in">
               <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
                 <div>
                   <h2 className="font-mono text-xs uppercase tracking-[0.3em]">Choose a template</h2>

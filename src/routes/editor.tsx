@@ -43,6 +43,7 @@ function EditorPage() {
 
   const leftRef = useRef<PanelImperativeHandle | null>(null);
   const rightRef = useRef<PanelImperativeHandle | null>(null);
+  const shellRef = useRef<HTMLDivElement | null>(null);
   const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [rightCollapsed, setRightCollapsed] = useState(false);
   const [isNarrow, setIsNarrow] = useState(false);
@@ -115,11 +116,12 @@ function EditorPage() {
 
   // Try loading scene from URL hash (#scene=base64) on mount
   useEffect(() => {
-    const media = window.matchMedia("(max-width: 767px)");
-    const sync = () => setIsNarrow(media.matches);
+    const sync = () => setIsNarrow((shellRef.current?.clientWidth ?? window.innerWidth) < 768);
     sync();
-    media.addEventListener("change", sync);
-    return () => media.removeEventListener("change", sync);
+    const observer = new ResizeObserver(sync);
+    if (shellRef.current) observer.observe(shellRef.current);
+    window.addEventListener("resize", sync);
+    return () => { observer.disconnect(); window.removeEventListener("resize", sync); };
   }, []);
 
   useEffect(() => {
@@ -208,7 +210,7 @@ function EditorPage() {
         </div>
       </header>
 
-      <div className="flex-1 min-h-0 relative p-2 pt-2">
+      <div ref={shellRef} className="flex-1 min-h-0 relative p-2 pt-2">
         <PanelGroup
           key={panelOrientation}
           orientation={panelOrientation}

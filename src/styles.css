@@ -161,33 +161,59 @@
     box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.15);
   }
 
-  /* Lamp / spotlight cone — conic gradient beam */
-  .lamp-cone {
-    position: absolute; left: 50%; top: 0; transform: translateX(-50%);
-    width: min(900px, 100%); height: 380px; pointer-events: none;
+  /* Orbital Beacon hero — replaces lamp */
+  .beacon {
+    position: absolute; left: 50%; top: 60px; transform: translateX(-50%);
+    width: min(720px, 90vw); height: 720px; pointer-events: none; z-index: 0;
+  }
+  .beacon-conic {
+    position: absolute; inset: 0; border-radius: 50%;
+    background: conic-gradient(from 0deg,
+      transparent 0deg,
+      var(--aurora-1) 60deg,
+      var(--aurora-2) 140deg,
+      var(--aurora-3) 220deg,
+      var(--aurora-1) 300deg,
+      transparent 360deg);
+    filter: blur(70px); opacity: 0.45;
+    mask-image: radial-gradient(circle at 50% 50%, black 0%, black 35%, transparent 70%);
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, black 0%, black 35%, transparent 70%);
+    animation: beaconSpin 22s linear infinite;
+  }
+  .beacon-orb {
+    position: absolute; left: 50%; top: 50%; width: 220px; height: 220px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
     background:
-      conic-gradient(from 210deg at 50% 0%,
-        transparent 0deg,
-        var(--aurora-2) 30deg,
-        var(--aurora-1) 60deg,
-        var(--aurora-3) 90deg,
-        transparent 120deg);
-    filter: blur(60px); opacity: 0.55;
-    mask-image: linear-gradient(to bottom, black, transparent 90%);
-    animation: lampPulse 6s ease-in-out infinite;
+      radial-gradient(circle at 35% 30%, oklch(1 0 0 / 0.95), oklch(0.85 0.18 200 / 0.9) 30%, oklch(0.55 0.22 305 / 0.7) 60%, transparent 80%);
+    filter: blur(2px);
+    box-shadow:
+      0 0 80px var(--aurora-2),
+      0 0 160px var(--aurora-1),
+      inset 0 -20px 60px oklch(0 0 0 / 0.4);
+    animation: beaconPulse 5s ease-in-out infinite;
   }
-  .lamp-line {
-    position: absolute; left: 50%; top: 0; transform: translateX(-50%);
-    width: 60%; max-width: 600px; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--aurora-2), var(--aurora-1), var(--aurora-3), transparent);
-    box-shadow: 0 0 32px var(--aurora-2), 0 0 64px var(--aurora-1);
+  .beacon-ring {
+    position: absolute; left: 50%; top: 50%;
+    border: 1px solid oklch(1 0 0 / 0.18); border-radius: 50%;
+    transform: translate(-50%, -50%) rotateX(72deg);
+    box-shadow: 0 0 40px -10px var(--aurora-2);
   }
+  .beacon-ring-1 { width: 360px; height: 360px; animation: ringSpin 18s linear infinite; }
+  .beacon-ring-2 { width: 520px; height: 520px; border-color: oklch(1 0 0 / 0.10); animation: ringSpin 26s linear infinite reverse; }
+  .beacon-ring-3 { width: 680px; height: 680px; border-color: oklch(1 0 0 / 0.06); animation: ringSpin 38s linear infinite; }
 
-  /* Spotlight cursor follower (static center radial) */
-  .spotlight {
-    background: radial-gradient(600px circle at 50% 0%, oklch(0.82 0.18 200 / 0.18), transparent 60%);
+  /* Vertical light beams */
+  .beam-stack { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .beam {
+    position: absolute; top: -10%; bottom: -10%; width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--aurora-2), transparent);
+    box-shadow: 0 0 12px var(--aurora-2);
+    opacity: 0.55;
   }
-}
+  .beam-a { left: 18%; animation: beamDrift 11s ease-in-out infinite; }
+  .beam-b { left: 50%; background: linear-gradient(to bottom, transparent, var(--aurora-1), transparent); box-shadow: 0 0 12px var(--aurora-1); animation: beamDrift 14s ease-in-out infinite reverse; }
+  .beam-c { left: 82%; background: linear-gradient(to bottom, transparent, var(--aurora-3), transparent); box-shadow: 0 0 12px var(--aurora-3); animation: beamDrift 17s ease-in-out infinite; }
 
 @keyframes revealUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes lensOpen { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0% 0 0 0); } }
@@ -199,8 +225,13 @@
 }
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes pulseGlow { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
-@keyframes lampPulse { 0%,100% { opacity: 0.45; transform: translateX(-50%) scale(1); } 50% { opacity: 0.7; transform: translateX(-50%) scale(1.04); } }
+@keyframes beaconSpin { to { transform: translateX(-50%) rotate(360deg); } }
+@keyframes beaconPulse { 0%,100% { transform: translate(-50%, -50%) scale(1); filter: blur(2px); } 50% { transform: translate(-50%, -50%) scale(1.06); filter: blur(1px); } }
+@keyframes ringSpin { to { transform: translate(-50%, -50%) rotateX(72deg) rotateZ(360deg); } }
+@keyframes beamDrift { 0%,100% { transform: translateX(0); opacity: 0.4; } 50% { transform: translateX(40px); opacity: 0.7; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .animate-reveal { animation: revealUp 0.9s var(--ease-cinematic) both; }
 .animate-lens { animation: lensOpen 1.4s var(--ease-cinematic) both; }
 .animate-pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
+.animate-fade-in { animation: fadeIn 0.2s ease-out both; }

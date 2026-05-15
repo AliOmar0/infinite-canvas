@@ -199,21 +199,26 @@ function EditorPage() {
       </header>
 
       <div className="flex-1 min-h-0 relative p-2 pt-2">
-        <PanelGroup orientation="horizontal" id="infinite-studio-v4" className="flex h-full w-full">
+        <PanelGroup
+          orientation="horizontal"
+          id="infinite-studio-v5"
+          resizeTargetMinimumSize={{ fine: 20, coarse: 36 }}
+          className="h-full w-full"
+        >
           <Panel
             panelRef={leftRef}
             id="left"
-            defaultSize={22}
-            minSize={14}
-            maxSize={60}
+            defaultSize="24%"
+            minSize="18rem"
+            maxSize="48%"
             collapsible
-            collapsedSize={0}
-            className="rounded-xl liquid-glass overflow-hidden"
+            collapsedSize="0%"
+            className="min-w-0 rounded-xl liquid-glass overflow-hidden"
           >
             <div className="h-full w-full overflow-hidden"><SceneTree /></div>
           </Panel>
-          <ResizeHandle hidden={leftCollapsed} />
-          <Panel id="center" defaultSize={56} minSize={30} className="relative">
+          <ResizeHandle hidden={leftCollapsed} label="Resize scene panel" />
+          <Panel id="center" defaultSize="52%" minSize="24rem" className="relative min-w-0">
             <main id="viewport-region" className="absolute inset-0 bg-card rounded-xl overflow-hidden border border-border" aria-label="3D viewport">
               <Viewport />
               <div className="absolute top-3 left-4 font-mono text-[10px] tracking-[0.2em] text-foreground/60 pointer-events-none select-none px-2 py-1 rounded glass-pill">
@@ -294,16 +299,16 @@ function EditorPage() {
               )}
             </main>
           </Panel>
-          <ResizeHandle hidden={rightCollapsed} />
+          <ResizeHandle hidden={rightCollapsed} label="Resize properties panel" />
           <Panel
             panelRef={rightRef}
             id="right"
-            defaultSize={22}
-            minSize={16}
-            maxSize={60}
+            defaultSize="24%"
+            minSize="20rem"
+            maxSize="48%"
             collapsible
-            collapsedSize={0}
-            className="rounded-xl liquid-glass overflow-hidden"
+            collapsedSize="0%"
+            className="min-w-0 rounded-xl liquid-glass overflow-hidden"
           >
             <div className="h-full w-full overflow-hidden"><Properties /></div>
           </Panel>

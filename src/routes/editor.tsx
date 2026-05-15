@@ -166,7 +166,11 @@ function EditorPage() {
       </header>
 
       <div className="flex-1 flex min-h-0 relative gap-2 p-2 pt-2">
-        <aside className="w-60 shrink-0 rounded-xl liquid-glass overflow-hidden" aria-label="Scene tree">
+        <aside
+          className={`shrink-0 rounded-xl liquid-glass overflow-hidden transition-[width,opacity,margin] duration-300 ease-out ${leftOpen ? "w-60 opacity-100" : "w-0 opacity-0 -ml-2 pointer-events-none"}`}
+          aria-label="Scene tree"
+          aria-hidden={!leftOpen}
+        >
           <SceneTree />
         </aside>
 

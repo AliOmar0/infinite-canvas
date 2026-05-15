@@ -45,7 +45,9 @@ function EditorPage() {
   const rightRef = useRef<PanelImperativeHandle | null>(null);
   const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [rightCollapsed, setRightCollapsed] = useState(false);
+  const [isNarrow, setIsNarrow] = useState(false);
   const focusMode = leftCollapsed && rightCollapsed;
+  const panelOrientation = isNarrow ? "vertical" : "horizontal";
 
   const flash = (msg: string) => {
     setToast(msg);
@@ -112,6 +114,14 @@ function EditorPage() {
   };
 
   // Try loading scene from URL hash (#scene=base64) on mount
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const sync = () => setIsNarrow(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
+
   useEffect(() => {
     const h = window.location.hash;
     const m = h.match(/scene=([^&]+)/);

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
-import { Play, Pause, Download, RotateCcw, LayoutGrid, X, Search, Keyboard } from "lucide-react";
+import { Play, Pause, Download, RotateCcw, LayoutGrid, X, Search, Keyboard, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Maximize2, Minimize2 } from "lucide-react";
 import { Viewport } from "@/components/editor/Viewport";
 import { SceneTree } from "@/components/editor/SceneTree";
 import { Properties } from "@/components/editor/Properties";
@@ -33,6 +33,13 @@ function EditorPage() {
   const [showTemplates, setShowTemplates] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [query, setQuery] = useState("");
+  const [leftOpen, setLeftOpen] = useState(true);
+  const [rightOpen, setRightOpen] = useState(true);
+  const focusMode = !leftOpen && !rightOpen;
+  const toggleFocus = () => {
+    if (focusMode) { setLeftOpen(true); setRightOpen(true); }
+    else { setLeftOpen(false); setRightOpen(false); }
+  };
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -61,6 +68,9 @@ function EditorPage() {
       if (e.key === " ") { e.preventDefault(); togglePlaying(); }
       if (e.key === "t" || e.key === "T") setShowTemplates((v) => !v);
       if (e.key === "?") setShowShortcuts((v) => !v);
+      if (e.key === "[") setLeftOpen((v) => !v);
+      if (e.key === "]") setRightOpen((v) => !v);
+      if (e.key === "f" || e.key === "F") toggleFocus();
       if ((e.key === "Delete" || e.key === "Backspace")) {
         if (selectedId) removeObject(selectedId);
         else if (selectedLightId) removeLight(selectedLightId);
@@ -91,6 +101,31 @@ function EditorPage() {
           </span>
         </div>
         <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setLeftOpen((v) => !v)}
+            aria-label={leftOpen ? "Hide scene panel" : "Show scene panel"}
+            className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            title={leftOpen ? "Hide scene panel ([)" : "Show scene panel ([)"}
+          >
+            {leftOpen ? <PanelLeftClose className="size-3.5" /> : <PanelLeftOpen className="size-3.5" />}
+          </button>
+          <button
+            onClick={() => setRightOpen((v) => !v)}
+            aria-label={rightOpen ? "Hide properties panel" : "Show properties panel"}
+            className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            title={rightOpen ? "Hide properties ( ] )" : "Show properties ( ] )"}
+          >
+            {rightOpen ? <PanelRightClose className="size-3.5" /> : <PanelRightOpen className="size-3.5" />}
+          </button>
+          <button
+            onClick={toggleFocus}
+            aria-label={focusMode ? "Exit focus mode" : "Focus mode"}
+            className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            title={focusMode ? "Exit focus (F)" : "Focus mode (F)"}
+          >
+            {focusMode ? <Minimize2 className="size-3.5" /> : <Maximize2 className="size-3.5" />}
+          </button>
+          <span className="w-px h-5 bg-white/10 mx-1" aria-hidden />
           <button
             onClick={() => setShowShortcuts(true)}
             aria-label="Keyboard shortcuts"
@@ -131,7 +166,11 @@ function EditorPage() {
       </header>
 
       <div className="flex-1 flex min-h-0 relative gap-2 p-2 pt-2">
-        <aside className="w-60 shrink-0 rounded-xl liquid-glass overflow-hidden" aria-label="Scene tree">
+        <aside
+          className={`shrink-0 rounded-xl liquid-glass overflow-hidden transition-[width,opacity,margin] duration-300 ease-out ${leftOpen ? "w-60 opacity-100" : "w-0 opacity-0 -ml-2 pointer-events-none"}`}
+          aria-label="Scene tree"
+          aria-hidden={!leftOpen}
+        >
           <SceneTree />
         </aside>
 
@@ -220,6 +259,9 @@ function EditorPage() {
                     ["T", "Templates"],
                     ["Del / Bksp", "Delete selected"],
                     ["Cmd/Ctrl + D", "Duplicate selected"],
+                    ["[", "Toggle scene panel"],
+                    ["]", "Toggle properties"],
+                    ["F", "Focus mode (hide both)"],
                     ["Esc", "Close panel"],
                     ["?", "This dialog"],
                     ["Drag viewport", "Orbit camera"],
@@ -236,7 +278,11 @@ function EditorPage() {
           )}
         </main>
 
-        <aside className="w-72 shrink-0 rounded-xl liquid-glass overflow-hidden" aria-label="Properties panel">
+        <aside
+          className={`shrink-0 rounded-xl liquid-glass overflow-hidden transition-[width,opacity,margin] duration-300 ease-out ${rightOpen ? "w-72 opacity-100" : "w-0 opacity-0 -mr-2 pointer-events-none"}`}
+          aria-label="Properties panel"
+          aria-hidden={!rightOpen}
+        >
           <Properties />
         </aside>
       </div>

@@ -30,9 +30,9 @@ export function SceneTree() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="px-4 py-3 border-b border-border">
-        <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-3">
-          Add Geometry
+      <div className="px-4 py-3 border-b border-white/5">
+        <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-foreground/50 mb-3 flex items-center gap-2">
+          <span className="size-1 rounded-full bg-accent/70" /> Add Geometry
         </div>
         <div className="grid grid-cols-3 gap-1">
           {primitives.map((p) => {
@@ -42,20 +42,20 @@ export function SceneTree() {
                 key={p}
                 onClick={() => addObject(p)}
                 aria-label={`Add ${p}`}
-                className="flex flex-col items-center gap-1 py-2 border border-border hover:bg-white/5 hover:border-white/30 transition-colors rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex flex-col items-center gap-1.5 py-2.5 rounded-md bg-white/[0.02] border border-white/5 hover:bg-white/[0.06] hover:border-white/20 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 title={`Add ${p}`}
               >
-                <Icon className="size-3 text-muted-foreground" />
-                <span className="font-mono text-[9px] uppercase tracking-wider truncate w-full text-center">{p}</span>
+                <Icon className="size-3.5 text-foreground/70" />
+                <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-foreground/80 truncate w-full text-center">{p}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      <div className="px-4 py-3 border-b border-border">
-        <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-3">
-          Add Light
+      <div className="px-4 py-3 border-b border-white/5">
+        <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-foreground/50 mb-3 flex items-center gap-2">
+          <span className="size-1 rounded-full bg-amber-300/80" /> Add Light
         </div>
         <div className="grid grid-cols-4 gap-1">
           {lightTypes.map((l) => {
@@ -65,20 +65,20 @@ export function SceneTree() {
                 key={l}
                 onClick={() => addLight(l)}
                 aria-label={`Add ${l} light`}
-                className="flex flex-col items-center gap-1 py-2 border border-border hover:bg-white/5 hover:border-white/30 transition-colors rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex flex-col items-center gap-1.5 py-2.5 rounded-md bg-white/[0.02] border border-white/5 hover:bg-white/[0.06] hover:border-white/20 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 title={`Add ${l}`}
               >
-                <Icon className="size-3 text-muted-foreground" />
-                <span className="font-mono text-[8px] uppercase tracking-wider truncate w-full text-center">{l}</span>
+                <Icon className="size-3.5 text-foreground/70" />
+                <span className="font-mono text-[8px] uppercase tracking-[0.15em] text-foreground/80 truncate w-full text-center">{l}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      <div className="px-4 py-2 border-b border-border flex items-center justify-between">
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Scene</span>
-        <span className="font-mono text-[10px] text-muted-foreground">{objects.length} OBJ · {lights.length} LIGHT</span>
+      <div className="px-4 py-2 border-b border-white/5 flex items-center justify-between">
+        <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-foreground/50">Scene</span>
+        <span className="font-mono text-[10px] text-foreground/40 tabular-nums">{objects.length} OBJ · {lights.length} LIGHT</span>
       </div>
 
       <div className="flex-1 overflow-y-auto py-1">
@@ -90,8 +90,10 @@ export function SceneTree() {
               key={o.id}
               onClick={() => selectObject(o.id)}
               className={cn(
-                "group flex items-center gap-2 px-4 py-1.5 cursor-pointer text-xs font-mono transition-colors",
-                active ? "bg-white/10 text-foreground" : "text-muted-foreground hover:bg-white/5",
+                "group relative flex items-center gap-2 mx-2 my-0.5 px-2.5 py-1.5 rounded-md cursor-pointer text-[11px] font-mono tracking-wide transition-all",
+                active
+                  ? "bg-gradient-to-r from-accent/20 to-transparent text-foreground ring-1 ring-accent/30 shadow-[inset_2px_0_0_0_var(--accent)]"
+                  : "text-foreground/55 hover:text-foreground hover:bg-white/[0.04]",
               )}
             >
               <Icon className="size-3 shrink-0" aria-hidden />
@@ -115,8 +117,8 @@ export function SceneTree() {
         })}
 
         {lights.length > 0 && (
-          <div className="mt-2 px-4 pt-2 pb-1 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground border-t border-border">
-            Lights
+          <div className="mt-3 mx-2 px-1 pt-2 pb-1 font-mono text-[9px] uppercase tracking-[0.24em] text-foreground/40 border-t border-white/5 flex items-center gap-2">
+            <span className="size-1 rounded-full bg-amber-300/80" /> Lights
           </div>
         )}
         {lights.map((l) => {
@@ -127,8 +129,10 @@ export function SceneTree() {
               key={l.id}
               onClick={() => selectLight(l.id)}
               className={cn(
-                "group flex items-center gap-2 px-4 py-1.5 cursor-pointer text-xs font-mono transition-colors",
-                active ? "bg-white/10 text-foreground" : "text-muted-foreground hover:bg-white/5",
+                "group relative flex items-center gap-2 mx-2 my-0.5 px-2.5 py-1.5 rounded-md cursor-pointer text-[11px] font-mono tracking-wide transition-all",
+                active
+                  ? "bg-gradient-to-r from-amber-300/15 to-transparent text-foreground ring-1 ring-amber-300/30"
+                  : "text-foreground/55 hover:text-foreground hover:bg-white/[0.04]",
               )}
             >
               <Icon className="size-3 shrink-0" style={{ color: l.color }} aria-hidden />
@@ -145,11 +149,12 @@ export function SceneTree() {
         })}
 
         {objects.length === 0 && lights.length === 0 && (
-          <div className="px-4 py-8 text-center text-xs text-muted-foreground font-mono">
-            EMPTY SCENE
-            <div className="mt-3 flex justify-center">
-              <Plus className="size-4 text-muted-foreground" aria-hidden />
+          <div className="px-4 py-10 text-center font-mono">
+            <div className="mx-auto mb-3 size-8 rounded-full border border-white/10 flex items-center justify-center">
+              <Plus className="size-4 text-foreground/40" aria-hidden />
             </div>
+            <div className="text-[10px] uppercase tracking-[0.3em] text-foreground/40">Empty Scene</div>
+            <div className="text-[10px] text-foreground/30 mt-1">Add a primitive above</div>
           </div>
         )}
       </div>

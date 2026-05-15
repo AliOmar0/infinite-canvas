@@ -94,7 +94,24 @@
     animation: auroraShift 8s var(--ease-cinematic) infinite;
   }
 
-  /* Aurora blob layers */
+  /* Page-wide animated mesh background (richer than flat dark) */
+  .mesh-bg {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(60% 50% at 15% 10%, oklch(0.45 0.18 305 / 0.55), transparent 60%),
+      radial-gradient(50% 50% at 90% 20%, oklch(0.5 0.16 200 / 0.45), transparent 60%),
+      radial-gradient(70% 60% at 50% 100%, oklch(0.42 0.18 340 / 0.5), transparent 65%),
+      radial-gradient(40% 40% at 85% 85%, oklch(0.5 0.14 260 / 0.35), transparent 60%);
+    filter: blur(60px) saturate(140%);
+    animation: meshDrift 22s ease-in-out infinite alternate;
+  }
+  @keyframes meshDrift {
+    0%   { transform: translate3d(0,0,0) scale(1); }
+    50%  { transform: translate3d(2%, -2%, 0) scale(1.05); }
+    100% { transform: translate3d(-2%, 1%, 0) scale(1.02); }
+  }
+
+  /* Aurora blob layers (kept for sections) */
   .aurora-bg {
     position: absolute; inset: -20%; pointer-events: none; z-index: 0;
     filter: blur(80px); opacity: 0.55;
@@ -113,6 +130,14 @@
       linear-gradient(to bottom, oklch(1 0 0 / 0.06) 1px, transparent 1px);
     background-size: 56px 56px;
     mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 30%, transparent 75%);
+  }
+
+  /* Cursor-following spotlight (uses --x / --y vars on the parent) */
+  .spotlight {
+    position: absolute; inset: 0; pointer-events: none; z-index: 1;
+    background: radial-gradient(450px circle at var(--x, 50%) var(--y, 30%),
+      oklch(0.85 0.18 200 / 0.18), transparent 70%);
+    transition: background 0.2s ease-out;
   }
 
   /* Film grain */
@@ -161,59 +186,56 @@
     box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.15);
   }
 
-  /* Orbital Beacon hero — replaces lamp */
-  .beacon {
-    position: absolute; left: 50%; top: 60px; transform: translateX(-50%);
-    width: min(720px, 90vw); height: 720px; pointer-events: none; z-index: 0;
+  /* === Wireframe Globe Hero === */
+  .globe-stage {
+    position: absolute; left: 50%; top: 30px; transform: translateX(-50%);
+    width: min(620px, 92vw); aspect-ratio: 1; pointer-events: none; z-index: 0;
+    perspective: 1200px;
   }
-  .beacon-conic {
+  .globe {
+    position: absolute; inset: 0; transform-style: preserve-3d;
+    animation: globeSpin 28s linear infinite;
+  }
+  .globe::before, .globe::after {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    border: 1px solid oklch(0.85 0.18 200 / 0.35);
+    box-shadow: 0 0 60px -10px var(--aurora-2), inset 0 0 80px -20px var(--aurora-1);
+  }
+  .globe::after { transform: rotateX(60deg); border-color: oklch(0.72 0.22 305 / 0.35); }
+  .globe-meridian {
     position: absolute; inset: 0; border-radius: 50%;
-    background: conic-gradient(from 0deg,
-      transparent 0deg,
-      var(--aurora-1) 60deg,
-      var(--aurora-2) 140deg,
-      var(--aurora-3) 220deg,
-      var(--aurora-1) 300deg,
-      transparent 360deg);
-    filter: blur(70px); opacity: 0.45;
-    mask-image: radial-gradient(circle at 50% 50%, black 0%, black 35%, transparent 70%);
-    -webkit-mask-image: radial-gradient(circle at 50% 50%, black 0%, black 35%, transparent 70%);
-    animation: beaconSpin 22s linear infinite;
+    border: 1px solid oklch(1 0 0 / 0.12);
   }
-  .beacon-orb {
-    position: absolute; left: 50%; top: 50%; width: 220px; height: 220px;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    background:
-      radial-gradient(circle at 35% 30%, oklch(1 0 0 / 0.95), oklch(0.85 0.18 200 / 0.9) 30%, oklch(0.55 0.22 305 / 0.7) 60%, transparent 80%);
-    filter: blur(2px);
-    box-shadow:
-      0 0 80px var(--aurora-2),
-      0 0 160px var(--aurora-1),
-      inset 0 -20px 60px oklch(0 0 0 / 0.4);
-    animation: beaconPulse 5s ease-in-out infinite;
-  }
-  .beacon-ring {
+  .globe-core {
     position: absolute; left: 50%; top: 50%;
-    border: 1px solid oklch(1 0 0 / 0.18); border-radius: 50%;
-    transform: translate(-50%, -50%) rotateX(72deg);
-    box-shadow: 0 0 40px -10px var(--aurora-2);
+    width: 38%; aspect-ratio: 1; transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, oklch(1 0 0 / 0.95), oklch(0.85 0.18 200 / 0.85) 25%, oklch(0.55 0.22 305 / 0.7) 55%, oklch(0.13 0.04 280 / 0.9) 90%);
+    box-shadow: 0 0 80px var(--aurora-2), 0 0 180px var(--aurora-1), inset -20px -30px 60px oklch(0 0 0 / 0.5);
+    animation: globePulse 5s ease-in-out infinite;
   }
-  .beacon-ring-1 { width: 360px; height: 360px; animation: ringSpin 18s linear infinite; }
-  .beacon-ring-2 { width: 520px; height: 520px; border-color: oklch(1 0 0 / 0.10); animation: ringSpin 26s linear infinite reverse; }
-  .beacon-ring-3 { width: 680px; height: 680px; border-color: oklch(1 0 0 / 0.06); animation: ringSpin 38s linear infinite; }
+  .orbit-node {
+    position: absolute; left: 50%; top: 50%;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--aurora-2);
+    box-shadow: 0 0 16px var(--aurora-2), 0 0 30px var(--aurora-1);
+  }
+  @keyframes globeSpin { to { transform: rotateY(360deg); } }
+  @keyframes globePulse { 0%,100% { transform: translate(-50%,-50%) scale(1); } 50% { transform: translate(-50%,-50%) scale(1.04); } }
 
-  /* Vertical light beams */
-  .beam-stack { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-  .beam {
-    position: absolute; top: -10%; bottom: -10%; width: 1px;
-    background: linear-gradient(to bottom, transparent, var(--aurora-2), transparent);
-    box-shadow: 0 0 12px var(--aurora-2);
-    opacity: 0.55;
+  /* Floating 3D primitive silhouettes around hero */
+  .float-shape {
+    position: absolute; pointer-events: none; z-index: 1;
+    filter: drop-shadow(0 12px 30px oklch(0 0 0 / 0.55));
+    animation: floatY 9s ease-in-out infinite;
   }
-  .beam-a { left: 18%; animation: beamDrift 11s ease-in-out infinite; }
-  .beam-b { left: 50%; background: linear-gradient(to bottom, transparent, var(--aurora-1), transparent); box-shadow: 0 0 12px var(--aurora-1); animation: beamDrift 14s ease-in-out infinite reverse; }
-  .beam-c { left: 82%; background: linear-gradient(to bottom, transparent, var(--aurora-3), transparent); box-shadow: 0 0 12px var(--aurora-3); animation: beamDrift 17s ease-in-out infinite; }
+  .float-shape-2 { animation-duration: 11s; animation-delay: -3s; }
+  .float-shape-3 { animation-duration: 13s; animation-delay: -6s; }
+  @keyframes floatY {
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    50%     { transform: translateY(-22px) rotate(8deg); }
+  }
+
 
 @keyframes revealUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes lensOpen { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0% 0 0 0); } }

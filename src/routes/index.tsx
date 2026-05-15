@@ -58,8 +58,16 @@ function Index() {
     [tagFilter]
   );
 
+  // Cursor spotlight tracking for hero
+  const onHeroMove = (e: React.MouseEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty("--x", `${((e.clientX - rect.left) / rect.width) * 100}%`);
+    e.currentTarget.style.setProperty("--y", `${((e.clientY - rect.top) / rect.height) * 100}%`);
+  };
+
   return (
-    <div className="bg-background text-foreground font-display min-h-screen">
+    <div className="bg-background text-foreground font-display min-h-screen relative">
+      <div className="mesh-bg" aria-hidden />
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-foreground focus:text-background focus:px-3 focus:py-1 focus:rounded">
         Skip to content
       </a>
@@ -93,20 +101,61 @@ function Index() {
       </nav>
 
       <main id="main">
-        {/* Hero — Orbital Beacon */}
-        <section className="relative pt-40 pb-20 px-6 overflow-hidden grain">
+        {/* Hero — Wireframe Globe */}
+        <section onMouseMove={onHeroMove} className="relative pt-40 pb-24 px-6 overflow-hidden grain">
           <div className="aurora-bg" aria-hidden />
           <div className="grid-bg" aria-hidden />
-          <div className="beacon" aria-hidden>
-            <div className="beacon-conic" />
-            <div className="beacon-orb" />
-            <div className="beacon-ring beacon-ring-1" />
-            <div className="beacon-ring beacon-ring-2" />
-            <div className="beacon-ring beacon-ring-3" />
+          <div className="spotlight" aria-hidden />
+
+          {/* Wireframe globe with orbiting nodes */}
+          <div className="globe-stage" aria-hidden>
+            <div className="globe">
+              <div className="globe-meridian" style={{ transform: "rotateY(0deg)" }} />
+              <div className="globe-meridian" style={{ transform: "rotateY(30deg)" }} />
+              <div className="globe-meridian" style={{ transform: "rotateY(60deg)" }} />
+              <div className="globe-meridian" style={{ transform: "rotateY(90deg)" }} />
+              <div className="globe-meridian" style={{ transform: "rotateY(120deg)" }} />
+              <div className="globe-meridian" style={{ transform: "rotateY(150deg)" }} />
+              <div className="globe-meridian" style={{ transform: "rotateX(30deg)" }} />
+              <div className="globe-meridian" style={{ transform: "rotateX(60deg)" }} />
+              <div className="globe-meridian" style={{ transform: "rotateX(90deg)" }} />
+            </div>
+            <div className="globe-core" />
+            {[0, 60, 120, 180, 240, 300].map((deg, i) => (
+              <span key={deg} className="orbit-node" style={{
+                transform: `translate(-50%,-50%) rotate(${deg}deg) translateX(${44 + (i % 3) * 6}%) rotate(-${deg}deg)`,
+                animationDelay: `${i * -1.5}s`,
+              }} />
+            ))}
           </div>
-          <div className="beam-stack" aria-hidden>
-            <span className="beam beam-a" /><span className="beam beam-b" /><span className="beam beam-c" />
-          </div>
+
+          {/* Floating 3D primitive silhouettes */}
+          <svg className="float-shape hidden md:block" style={{ left: "8%", top: "32%", width: 96 }} viewBox="0 0 100 100" fill="none" aria-hidden>
+            <defs>
+              <linearGradient id="cubeG" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="oklch(0.85 0.18 200)" />
+                <stop offset="100%" stopColor="oklch(0.55 0.22 305)" />
+              </linearGradient>
+            </defs>
+            <path d="M50 10 L85 28 L85 70 L50 90 L15 70 L15 28 Z" fill="url(#cubeG)" opacity="0.85" />
+            <path d="M50 10 L85 28 L50 48 L15 28 Z" fill="oklch(1 0 0 / 0.18)" />
+            <path d="M50 48 L85 28 L85 70 L50 90 Z" fill="oklch(0 0 0 / 0.25)" />
+          </svg>
+          <svg className="float-shape float-shape-2 hidden md:block" style={{ right: "9%", top: "26%", width: 84 }} viewBox="0 0 100 100" aria-hidden>
+            <defs>
+              <radialGradient id="sphG" cx="0.35" cy="0.3">
+                <stop offset="0%" stopColor="oklch(1 0 0 / 0.95)" />
+                <stop offset="60%" stopColor="oklch(0.68 0.20 340)" />
+                <stop offset="100%" stopColor="oklch(0.2 0.04 280)" />
+              </radialGradient>
+            </defs>
+            <circle cx="50" cy="50" r="42" fill="url(#sphG)" />
+          </svg>
+          <svg className="float-shape float-shape-3 hidden md:block" style={{ right: "14%", bottom: "24%", width: 110 }} viewBox="0 0 120 80" fill="none" aria-hidden>
+            <ellipse cx="60" cy="40" rx="50" ry="28" stroke="oklch(0.85 0.18 200 / 0.7)" strokeWidth="2" />
+            <ellipse cx="60" cy="40" rx="50" ry="14" stroke="oklch(0.72 0.22 305 / 0.6)" strokeWidth="2" />
+            <ellipse cx="60" cy="40" rx="38" ry="22" stroke="oklch(0.68 0.20 340 / 0.5)" strokeWidth="1.5" />
+          </svg>
 
           <div className="relative max-w-5xl mx-auto text-center z-10">
             <div className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-6 animate-reveal [animation-delay:100ms] glass-pill px-3 py-1.5 rounded-full">

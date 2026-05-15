@@ -46,6 +46,32 @@ function EditorPage() {
   const [rightCollapsed, setRightCollapsed] = useState(false);
   const focusMode = leftCollapsed && rightCollapsed;
 
+  // Clear stale persisted panel layouts BEFORE the library reads them on first render
+  useState(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      Object.keys(localStorage)
+        .filter((k) => k.toLowerCase().includes("panel") || k.includes("infinite-studio"))
+        .forEach((k) => localStorage.removeItem(k));
+    } catch { /* ignore */ }
+    return null;
+  });
+
+  // Backup: force panels to sane sizes on mount
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      try {
+        leftRef.current?.expand();
+        rightRef.current?.expand();
+        leftRef.current?.resize(22);
+        rightRef.current?.resize(22);
+      } catch { /* ignore */ }
+      setLeftCollapsed(false);
+      setRightCollapsed(false);
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
+
   const flash = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 1800);
@@ -198,18 +224,18 @@ function EditorPage() {
       </header>
 
       <div className="flex-1 min-h-0 relative p-2 pt-2">
-        <PanelGroup orientation="horizontal" id="infinite-studio-layout" className="gap-2 flex h-full w-full">
+        <PanelGroup orientation="horizontal" id="infinite-studio-v3" defaultLayout={{ left: 22, center: 56, right: 22 }} className="flex h-full w-full gap-1.5">
           <Panel
             panelRef={leftRef}
             id="left"
-            defaultSize={18}
+            defaultSize={20}
             minSize={14}
-            maxSize={32}
+            maxSize={34}
             collapsible
             collapsedSize={0}
             className="rounded-xl liquid-glass overflow-hidden"
           >
-            <div className="h-full min-w-[14rem]"><SceneTree /></div>
+            <div className="h-full w-full overflow-hidden"><SceneTree /></div>
           </Panel>
           <ResizeHandle hidden={leftCollapsed} />
           <Panel id="center" minSize={30} className="relative">
@@ -304,7 +330,7 @@ function EditorPage() {
             collapsedSize={0}
             className="rounded-xl liquid-glass overflow-hidden"
           >
-            <div className="h-full min-w-[16rem]"><Properties /></div>
+            <div className="h-full w-full overflow-hidden"><Properties /></div>
           </Panel>
         </PanelGroup>
       </div>
@@ -337,9 +363,9 @@ function IconBtn({ children, ...rest }: React.ButtonHTMLAttributes<HTMLButtonEle
 function ResizeHandle({ hidden }: { hidden?: boolean }) {
   if (hidden) return null;
   return (
-    <PanelResizeHandle className="group relative flex w-2 items-center justify-center">
-      <div className="h-12 w-1 rounded-full bg-white/10 group-hover:bg-accent/60 transition-colors flex items-center justify-center">
-        <GripVertical className="size-3 text-white/40 group-hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+    <PanelResizeHandle className="group relative flex w-3 shrink-0 cursor-col-resize items-center justify-center self-stretch hover:bg-white/[0.04] transition-colors">
+      <div className="h-16 w-[3px] rounded-full bg-white/15 group-hover:bg-accent/80 transition-colors flex items-center justify-center">
+        <GripVertical className="size-3 text-foreground/0 group-hover:text-foreground/80 transition-colors" />
       </div>
     </PanelResizeHandle>
   );

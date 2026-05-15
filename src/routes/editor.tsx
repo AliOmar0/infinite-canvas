@@ -297,7 +297,7 @@ function EditorPage() {
           <Panel
             panelRef={rightRef}
             id="right"
-            defaultSize={20}
+            defaultSize={22}
             minSize={16}
             maxSize={34}
             collapsible

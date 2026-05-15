@@ -149,11 +149,12 @@ export function SceneTree() {
         })}
 
         {objects.length === 0 && lights.length === 0 && (
-          <div className="px-4 py-8 text-center text-xs text-muted-foreground font-mono">
-            EMPTY SCENE
-            <div className="mt-3 flex justify-center">
-              <Plus className="size-4 text-muted-foreground" aria-hidden />
+          <div className="px-4 py-10 text-center font-mono">
+            <div className="mx-auto mb-3 size-8 rounded-full border border-white/10 flex items-center justify-center">
+              <Plus className="size-4 text-foreground/40" aria-hidden />
             </div>
+            <div className="text-[10px] uppercase tracking-[0.3em] text-foreground/40">Empty Scene</div>
+            <div className="text-[10px] text-foreground/30 mt-1">Add a primitive above</div>
           </div>
         )}
       </div>

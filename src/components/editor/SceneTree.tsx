@@ -65,20 +65,20 @@ export function SceneTree() {
                 key={l}
                 onClick={() => addLight(l)}
                 aria-label={`Add ${l} light`}
-                className="flex flex-col items-center gap-1 py-2 border border-border hover:bg-white/5 hover:border-white/30 transition-colors rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex flex-col items-center gap-1.5 py-2.5 rounded-md bg-white/[0.02] border border-white/5 hover:bg-white/[0.06] hover:border-white/20 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 title={`Add ${l}`}
               >
-                <Icon className="size-3 text-muted-foreground" />
-                <span className="font-mono text-[8px] uppercase tracking-wider truncate w-full text-center">{l}</span>
+                <Icon className="size-3.5 text-foreground/70" />
+                <span className="font-mono text-[8px] uppercase tracking-[0.15em] text-foreground/80 truncate w-full text-center">{l}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      <div className="px-4 py-2 border-b border-border flex items-center justify-between">
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Scene</span>
-        <span className="font-mono text-[10px] text-muted-foreground">{objects.length} OBJ · {lights.length} LIGHT</span>
+      <div className="px-4 py-2 border-b border-white/5 flex items-center justify-between">
+        <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-foreground/50">Scene</span>
+        <span className="font-mono text-[10px] text-foreground/40 tabular-nums">{objects.length} OBJ · {lights.length} LIGHT</span>
       </div>
 
       <div className="flex-1 overflow-y-auto py-1">

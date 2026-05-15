@@ -141,6 +141,8 @@ interface EditorState {
   togglePlaying: () => void;
   loadTemplate: (t: Template) => void;
   reset: () => void;
+  serializeScene: () => string;
+  loadSceneJSON: (json: string) => boolean;
 }
 
 const counter = { n: 0 };
@@ -310,6 +312,37 @@ export const useEditor = create<EditorState>((set, get) => ({
       showGrid: t.showGrid ?? false,
       playing: true,
     }),
+  serializeScene: () => {
+    const s = get();
+    return JSON.stringify({
+      v: 1, app: "infinite-studio",
+      objects: s.objects, lights: s.lights,
+      environment: s.environment, envIntensity: s.envIntensity,
+      background: s.background, showGrid: s.showGrid, showShadows: s.showShadows,
+      toneMapping: s.toneMapping, exposure: s.exposure, fx: s.fx,
+    }, null, 2);
+  },
+  loadSceneJSON: (json) => {
+    try {
+      const d = JSON.parse(json);
+      if (!d || !Array.isArray(d.objects)) return false;
+      set({
+        objects: d.objects.map((o: SceneObject) => ({ ...baseObjectDefaults, ...o, id: uid() })),
+        lights: (d.lights ?? []).map((l: SceneLight) => ({ ...l, id: uid() })),
+        selectedId: null, selectedLightId: null,
+        environment: d.environment ?? "studio",
+        envIntensity: d.envIntensity ?? 1,
+        background: d.background ?? "#050505",
+        showGrid: d.showGrid ?? true,
+        showShadows: d.showShadows ?? true,
+        toneMapping: d.toneMapping ?? "aces",
+        exposure: d.exposure ?? 1,
+        fx: { ...defaultFx, ...(d.fx ?? {}) },
+        playing: true,
+      });
+      return true;
+    } catch { return false; }
+  },
   reset: () =>
     set({
       objects: initialObjects.map((o) => ({ ...o, id: uid() })),

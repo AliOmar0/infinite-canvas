@@ -46,8 +46,13 @@ function EditorPage() {
   const [rightCollapsed, setRightCollapsed] = useState(false);
   const focusMode = leftCollapsed && rightCollapsed;
 
-  // Force expand panels on mount (library can persist collapsed state across reloads)
+  // Clear any stale persisted layout from older builds (was leaving panels stuck collapsed)
   useEffect(() => {
+    try {
+      Object.keys(localStorage)
+        .filter((k) => k.includes("infinite-studio") || k.includes("react-resizable-panels"))
+        .forEach((k) => localStorage.removeItem(k));
+    } catch { /* ignore */ }
     const id = requestAnimationFrame(() => {
       leftRef.current?.expand();
       rightRef.current?.expand();

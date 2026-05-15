@@ -42,20 +42,20 @@ export function SceneTree() {
                 key={p}
                 onClick={() => addObject(p)}
                 aria-label={`Add ${p}`}
-                className="flex flex-col items-center gap-1 py-2 border border-border hover:bg-white/5 hover:border-white/30 transition-colors rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex flex-col items-center gap-1.5 py-2.5 rounded-md bg-white/[0.02] border border-white/5 hover:bg-white/[0.06] hover:border-white/20 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 title={`Add ${p}`}
               >
-                <Icon className="size-3 text-muted-foreground" />
-                <span className="font-mono text-[9px] uppercase tracking-wider truncate w-full text-center">{p}</span>
+                <Icon className="size-3.5 text-foreground/70" />
+                <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-foreground/80 truncate w-full text-center">{p}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      <div className="px-4 py-3 border-b border-border">
-        <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-3">
-          Add Light
+      <div className="px-4 py-3 border-b border-white/5">
+        <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-foreground/50 mb-3 flex items-center gap-2">
+          <span className="size-1 rounded-full bg-amber-300/80" /> Add Light
         </div>
         <div className="grid grid-cols-4 gap-1">
           {lightTypes.map((l) => {

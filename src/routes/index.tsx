@@ -59,12 +59,7 @@ function Index() {
     [tagFilter]
   );
 
-  // Cursor spotlight tracking for hero
-  const onHeroMove = (e: React.MouseEvent<HTMLElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    e.currentTarget.style.setProperty("--x", `${((e.clientX - rect.left) / rect.width) * 100}%`);
-    e.currentTarget.style.setProperty("--y", `${((e.clientY - rect.top) / rect.height) * 100}%`);
-  };
+
 
   return (
     <div className="bg-background text-foreground font-display min-h-screen relative">

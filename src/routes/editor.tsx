@@ -33,6 +33,13 @@ function EditorPage() {
   const [showTemplates, setShowTemplates] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [query, setQuery] = useState("");
+  const [leftOpen, setLeftOpen] = useState(true);
+  const [rightOpen, setRightOpen] = useState(true);
+  const focusMode = !leftOpen && !rightOpen;
+  const toggleFocus = () => {
+    if (focusMode) { setLeftOpen(true); setRightOpen(true); }
+    else { setLeftOpen(false); setRightOpen(false); }
+  };
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();

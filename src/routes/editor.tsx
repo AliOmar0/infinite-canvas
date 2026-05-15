@@ -102,6 +102,31 @@ function EditorPage() {
         </div>
         <div className="flex items-center gap-1.5">
           <button
+            onClick={() => setLeftOpen((v) => !v)}
+            aria-label={leftOpen ? "Hide scene panel" : "Show scene panel"}
+            className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            title={leftOpen ? "Hide scene panel ([)" : "Show scene panel ([)"}
+          >
+            {leftOpen ? <PanelLeftClose className="size-3.5" /> : <PanelLeftOpen className="size-3.5" />}
+          </button>
+          <button
+            onClick={() => setRightOpen((v) => !v)}
+            aria-label={rightOpen ? "Hide properties panel" : "Show properties panel"}
+            className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            title={rightOpen ? "Hide properties ( ] )" : "Show properties ( ] )"}
+          >
+            {rightOpen ? <PanelRightClose className="size-3.5" /> : <PanelRightOpen className="size-3.5" />}
+          </button>
+          <button
+            onClick={toggleFocus}
+            aria-label={focusMode ? "Exit focus mode" : "Focus mode"}
+            className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            title={focusMode ? "Exit focus (F)" : "Focus mode (F)"}
+          >
+            {focusMode ? <Minimize2 className="size-3.5" /> : <Maximize2 className="size-3.5" />}
+          </button>
+          <span className="w-px h-5 bg-white/10 mx-1" aria-hidden />
+          <button
             onClick={() => setShowShortcuts(true)}
             aria-label="Keyboard shortcuts"
             className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"

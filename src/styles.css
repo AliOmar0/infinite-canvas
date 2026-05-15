@@ -199,6 +199,7 @@
 }
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @keyframes pulseGlow { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+@keyframes lampPulse { 0%,100% { opacity: 0.45; transform: translateX(-50%) scale(1); } 50% { opacity: 0.7; transform: translateX(-50%) scale(1.04); } }
 
 .animate-reveal { animation: revealUp 0.9s var(--ease-cinematic) both; }
 .animate-lens { animation: lensOpen 1.4s var(--ease-cinematic) both; }

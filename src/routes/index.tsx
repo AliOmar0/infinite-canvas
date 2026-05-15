@@ -93,13 +93,15 @@ function Index() {
 
       <main id="main">
         {/* Hero */}
-        <section className="relative pt-36 pb-20 px-6 overflow-hidden">
-          <div className="max-w-5xl mx-auto text-center">
-            <div className="inline-block font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-6 animate-reveal [animation-delay:100ms]">
-              Browser-Native 3D Engine · v0.4
+        <section className="relative pt-36 pb-20 px-6 overflow-hidden grain">
+          <div className="aurora-bg" aria-hidden />
+          <div className="grid-bg" aria-hidden />
+          <div className="relative max-w-5xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-6 animate-reveal [animation-delay:100ms] px-3 py-1 rounded-full border border-border bg-background/40 backdrop-blur">
+              <span className="size-1.5 rounded-full bg-accent animate-pulse-glow" /> Browser-Native 3D Engine · v0.4
             </div>
             <h1 className="text-5xl sm:text-6xl md:text-8xl font-extrabold tracking-tighter text-balance mb-8 animate-reveal [animation-delay:200ms] leading-[0.95]">
-              Infinite <span className="text-muted-foreground">Depth.</span>
+              <span className="text-aurora">Infinite Depth.</span>
               <br />
               Browser Native.
             </h1>
@@ -124,7 +126,7 @@ function Index() {
 
           <div className="mt-20 max-w-7xl mx-auto relative animate-lens [animation-delay:500ms]">
             <div className="absolute -inset-1 bg-gradient-to-b from-white/10 to-transparent rounded-xl blur-3xl opacity-30 pointer-events-none" />
-            <div className="relative w-full aspect-video rounded-xl ring-1 ring-white/10 overflow-hidden bg-card">
+            <div className="relative w-full aspect-video rounded-xl glow-ring overflow-hidden bg-card">
               <img
                 src={heroViewport}
                 alt="Infinite Studio viewport — cinematic 3D render of an obsidian sculpture"
@@ -149,6 +151,24 @@ function Index() {
                 <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mt-1">{m.v}</div>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Marquee */}
+        <section aria-hidden className="border-y border-border py-5 bg-background/60 relative overflow-hidden">
+          <div className="marquee">
+            <div className="marquee-track font-mono text-[11px] uppercase tracking-[0.35em] text-muted-foreground">
+              {Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="flex gap-12 pr-12">
+                  {["WebGL 2", "PBR Materials", "Real-Time", "Aurora FX", "Procedural Textures", "Cinematic Light Rigs", "Bloom · DOF · Chroma", "60 FPS", "Zero Install"].map((w) => (
+                    <span key={w} className="flex items-center gap-12">
+                      <span className="text-foreground/80">{w}</span>
+                      <span className="text-aurora">✦</span>
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -405,10 +425,9 @@ function Index() {
               <Shield className="size-3" aria-hidden /> Runs entirely in your browser
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-12 md:gap-16">
+          <div className="grid grid-cols-2 gap-12 md:gap-16">
             <FooterCol heading="Platform" links={[{ label: "Editor", to: "/editor" }, { label: "Materials", href: "#materials" }, { label: "Lighting", href: "#lighting" }]} />
             <FooterCol heading="Resources" links={[{ label: "Templates", href: "#templates" }, { label: "FAQ", href: "#faq" }]} />
-            <FooterCol heading="Connect" links={[{ label: "Twitter", href: "#" }, { label: "Discord", href: "#" }]} />
           </div>
         </div>
         <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between gap-2 items-start sm:items-center text-[9px] font-mono text-muted-foreground uppercase tracking-[0.2em]">

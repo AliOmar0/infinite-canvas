@@ -126,7 +126,7 @@ function Index() {
 
           <div className="mt-20 max-w-7xl mx-auto relative animate-lens [animation-delay:500ms]">
             <div className="absolute -inset-1 bg-gradient-to-b from-white/10 to-transparent rounded-xl blur-3xl opacity-30 pointer-events-none" />
-            <div className="relative w-full aspect-video rounded-xl ring-1 ring-white/10 overflow-hidden bg-card">
+            <div className="relative w-full aspect-video rounded-xl glow-ring overflow-hidden bg-card">
               <img
                 src={heroViewport}
                 alt="Infinite Studio viewport — cinematic 3D render of an obsidian sculpture"

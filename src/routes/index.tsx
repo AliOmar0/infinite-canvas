@@ -64,19 +64,20 @@ function Index() {
         Skip to content
       </a>
 
-      <nav aria-label="Primary" className="fixed top-0 w-full z-50 border-b border-border bg-background/70 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="font-mono text-sm tracking-tighter uppercase font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
+      <nav aria-label="Primary" className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[min(960px,calc(100%-2rem))]">
+        <div className="liquid-glass rounded-full px-3 h-14 flex items-center justify-between">
+          <Link to="/" className="font-mono text-sm tracking-tighter uppercase font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full pl-3 pr-4 flex items-center gap-2">
+            <span className="size-2 rounded-full bg-accent animate-pulse-glow" />
             Infinite Studio
           </Link>
-          <div className="hidden md:flex gap-8 text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
+          <div className="hidden md:flex items-center gap-1 text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
             {navLinks.map((l) =>
               l.to ? (
-                <Link key={l.label} to={l.href} className="hover:text-foreground transition-colors focus-visible:outline-none focus-visible:text-foreground">
+                <Link key={l.label} to={l.href} className="px-3 py-1.5 rounded-full hover:bg-white/10 hover:text-foreground transition-colors">
                   {l.label}
                 </Link>
               ) : (
-                <a key={l.label} href={l.href} className="hover:text-foreground transition-colors focus-visible:outline-none focus-visible:text-foreground">
+                <a key={l.label} href={l.href} className="px-3 py-1.5 rounded-full hover:bg-white/10 hover:text-foreground transition-colors">
                   {l.label}
                 </a>
               )
@@ -84,7 +85,7 @@ function Index() {
           </div>
           <Link
             to="/editor"
-            className="px-4 py-1.5 bg-accent text-accent-foreground text-[11px] font-mono uppercase tracking-[0.2em] font-bold rounded-full hover:bg-accent/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="px-4 py-2 bg-accent text-accent-foreground text-[11px] font-mono uppercase tracking-[0.2em] font-bold rounded-full hover:opacity-90 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             Open Editor
           </Link>
@@ -93,11 +94,13 @@ function Index() {
 
       <main id="main">
         {/* Hero */}
-        <section className="relative pt-36 pb-20 px-6 overflow-hidden grain">
+        <section className="relative pt-40 pb-20 px-6 overflow-hidden grain spotlight">
+          <div className="lamp-cone" aria-hidden />
+          <div className="lamp-line" aria-hidden />
           <div className="aurora-bg" aria-hidden />
           <div className="grid-bg" aria-hidden />
           <div className="relative max-w-5xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-6 animate-reveal [animation-delay:100ms] px-3 py-1 rounded-full border border-border bg-background/40 backdrop-blur">
+            <div className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-6 animate-reveal [animation-delay:100ms] glass-pill px-3 py-1.5 rounded-full">
               <span className="size-1.5 rounded-full bg-accent animate-pulse-glow" /> Browser-Native 3D Engine · v0.4
             </div>
             <h1 className="text-5xl sm:text-6xl md:text-8xl font-extrabold tracking-tighter text-balance mb-8 animate-reveal [animation-delay:200ms] leading-[0.95]">
@@ -146,8 +149,8 @@ function Index() {
               { k: "10", v: "HDRI Envs" },
               { k: "6", v: "Post-FX" },
             ].map((m) => (
-              <div key={m.v} className="border border-border rounded-md p-4 text-center bg-card/40">
-                <div className="text-2xl md:text-3xl font-extrabold tracking-tighter">{m.k}</div>
+              <div key={m.v} className="liquid-glass rounded-xl p-4 text-center">
+                <div className="text-2xl md:text-3xl font-extrabold tracking-tighter text-aurora">{m.k}</div>
                 <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground mt-1">{m.v}</div>
               </div>
             ))}

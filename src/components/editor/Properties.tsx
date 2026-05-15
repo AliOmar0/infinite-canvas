@@ -368,8 +368,9 @@ function FxPanel() {
       {fx.chromatic && <Slider label="CA Offset" value={fx.chromaticOffset} min={0} max={0.01} step={0.0005} onChange={(v) => setFx({ chromaticOffset: v })} />}
       <Toggle label="Depth of Field" checked={fx.dof} onChange={() => setFx({ dof: !fx.dof })} />
       {fx.dof && <>
-        <Slider label="Focus" value={fx.dofFocus} min={1} max={50} step={1} onChange={(v) => setFx({ dofFocus: v })} />
-        <Slider label="Bokeh" value={fx.dofBokeh} min={0} max={10} step={0.1} onChange={(v) => setFx({ dofBokeh: v })} />
+        <Slider label="Focus Distance" value={fx.dofFocus} min={0} max={1} step={0.005} onChange={(v) => setFx({ dofFocus: v })} />
+        <Slider label="Focal Length" value={fx.dofFocalLength} min={0.005} max={0.3} step={0.005} onChange={(v) => setFx({ dofFocalLength: v })} />
+        <Slider label="Bokeh Scale" value={fx.dofBokeh} min={0} max={15} step={0.1} onChange={(v) => setFx({ dofBokeh: v })} />
       </>}
       <Toggle label="Pixelate" checked={fx.pixelate} onChange={() => setFx({ pixelate: !fx.pixelate })} />
       {fx.pixelate && <Slider label="Pixel Size" value={fx.pixelSize} min={1} max={20} step={1} onChange={(v) => setFx({ pixelSize: v })} />}

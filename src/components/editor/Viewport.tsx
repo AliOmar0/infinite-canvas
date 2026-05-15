@@ -283,7 +283,7 @@ export function Viewport() {
                 <ChromaticAberration offset={new THREE.Vector2(fx.chromaticOffset, fx.chromaticOffset)} radialModulation={false} modulationOffset={0} />
               )}
               {fx.dof && (
-                <DepthOfField focusDistance={fx.dofFocus / 100} focalLength={0.05} bokehScale={fx.dofBokeh} />
+                <DepthOfField focusDistance={fx.dofFocus} focalLength={fx.dofFocalLength} bokehScale={fx.dofBokeh} />
               )}
               {fx.pixelate && <Pixelation granularity={fx.pixelSize} />}
               {fx.noise && <Noise opacity={fx.noiseOpacity} />}

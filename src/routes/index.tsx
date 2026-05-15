@@ -64,19 +64,20 @@ function Index() {
         Skip to content
       </a>
 
-      <nav aria-label="Primary" className="fixed top-0 w-full z-50 border-b border-border bg-background/70 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="font-mono text-sm tracking-tighter uppercase font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
+      <nav aria-label="Primary" className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[min(960px,calc(100%-2rem))]">
+        <div className="liquid-glass rounded-full px-3 h-14 flex items-center justify-between">
+          <Link to="/" className="font-mono text-sm tracking-tighter uppercase font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full pl-3 pr-4 flex items-center gap-2">
+            <span className="size-2 rounded-full bg-accent animate-pulse-glow" />
             Infinite Studio
           </Link>
-          <div className="hidden md:flex gap-8 text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
+          <div className="hidden md:flex items-center gap-1 text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
             {navLinks.map((l) =>
               l.to ? (
-                <Link key={l.label} to={l.href} className="hover:text-foreground transition-colors focus-visible:outline-none focus-visible:text-foreground">
+                <Link key={l.label} to={l.href} className="px-3 py-1.5 rounded-full hover:bg-white/10 hover:text-foreground transition-colors">
                   {l.label}
                 </Link>
               ) : (
-                <a key={l.label} href={l.href} className="hover:text-foreground transition-colors focus-visible:outline-none focus-visible:text-foreground">
+                <a key={l.label} href={l.href} className="px-3 py-1.5 rounded-full hover:bg-white/10 hover:text-foreground transition-colors">
                   {l.label}
                 </a>
               )
@@ -84,7 +85,7 @@ function Index() {
           </div>
           <Link
             to="/editor"
-            className="px-4 py-1.5 bg-accent text-accent-foreground text-[11px] font-mono uppercase tracking-[0.2em] font-bold rounded-full hover:bg-accent/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="px-4 py-2 bg-accent text-accent-foreground text-[11px] font-mono uppercase tracking-[0.2em] font-bold rounded-full hover:opacity-90 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             Open Editor
           </Link>

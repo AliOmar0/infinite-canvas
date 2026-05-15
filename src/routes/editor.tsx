@@ -43,9 +43,12 @@ function EditorPage() {
 
   const leftRef = useRef<PanelImperativeHandle | null>(null);
   const rightRef = useRef<PanelImperativeHandle | null>(null);
+  const shellRef = useRef<HTMLDivElement | null>(null);
   const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [rightCollapsed, setRightCollapsed] = useState(false);
+  const [isNarrow, setIsNarrow] = useState(false);
   const focusMode = leftCollapsed && rightCollapsed;
+  const panelOrientation = isNarrow ? "vertical" : "horizontal";
 
   const flash = (msg: string) => {
     setToast(msg);
@@ -112,6 +115,15 @@ function EditorPage() {
   };
 
   // Try loading scene from URL hash (#scene=base64) on mount
+  useEffect(() => {
+    const sync = () => setIsNarrow((shellRef.current?.clientWidth ?? window.innerWidth) < 768);
+    sync();
+    const observer = new ResizeObserver(sync);
+    if (shellRef.current) observer.observe(shellRef.current);
+    window.addEventListener("resize", sync);
+    return () => { observer.disconnect(); window.removeEventListener("resize", sync); };
+  }, []);
+
   useEffect(() => {
     const h = window.location.hash;
     const m = h.match(/scene=([^&]+)/);
@@ -198,22 +210,28 @@ function EditorPage() {
         </div>
       </header>
 
-      <div className="flex-1 min-h-0 relative p-2 pt-2">
-        <PanelGroup orientation="horizontal" id="infinite-studio-v4" className="flex h-full w-full">
+      <div ref={shellRef} className="flex-1 min-h-0 relative p-2 pt-2">
+        <PanelGroup
+          key={panelOrientation}
+          orientation={panelOrientation}
+          id={`infinite-studio-v5-${panelOrientation}`}
+          resizeTargetMinimumSize={{ fine: 20, coarse: 36 }}
+          className="h-full w-full"
+        >
           <Panel
             panelRef={leftRef}
             id="left"
-            defaultSize={22}
-            minSize={14}
-            maxSize={60}
+            defaultSize={isNarrow ? "34%" : "24%"}
+            minSize={isNarrow ? "12rem" : "14%"}
+            maxSize={isNarrow ? "70%" : "64%"}
             collapsible
-            collapsedSize={0}
-            className="rounded-xl liquid-glass overflow-hidden"
+            collapsedSize="0%"
+            className="min-w-0 rounded-xl liquid-glass overflow-hidden"
           >
             <div className="h-full w-full overflow-hidden"><SceneTree /></div>
           </Panel>
-          <ResizeHandle hidden={leftCollapsed} />
-          <Panel id="center" defaultSize={56} minSize={30} className="relative">
+          <ResizeHandle orientation={panelOrientation} hidden={leftCollapsed} label="Resize scene panel" />
+          <Panel id="center" defaultSize={isNarrow ? "32%" : "52%"} minSize={isNarrow ? "11rem" : "22%"} className="relative min-w-0">
             <main id="viewport-region" className="absolute inset-0 bg-card rounded-xl overflow-hidden border border-border" aria-label="3D viewport">
               <Viewport />
               <div className="absolute top-3 left-4 font-mono text-[10px] tracking-[0.2em] text-foreground/60 pointer-events-none select-none px-2 py-1 rounded glass-pill">
@@ -294,16 +312,16 @@ function EditorPage() {
               )}
             </main>
           </Panel>
-          <ResizeHandle hidden={rightCollapsed} />
+          <ResizeHandle orientation={panelOrientation} hidden={rightCollapsed} label="Resize properties panel" />
           <Panel
             panelRef={rightRef}
             id="right"
-            defaultSize={22}
-            minSize={16}
-            maxSize={60}
+            defaultSize={isNarrow ? "34%" : "24%"}
+            minSize={isNarrow ? "12rem" : "16%"}
+            maxSize={isNarrow ? "70%" : "64%"}
             collapsible
-            collapsedSize={0}
-            className="rounded-xl liquid-glass overflow-hidden"
+            collapsedSize="0%"
+            className="min-w-0 rounded-xl liquid-glass overflow-hidden"
           >
             <div className="h-full w-full overflow-hidden"><Properties /></div>
           </Panel>
@@ -335,12 +353,13 @@ function IconBtn({ children, ...rest }: React.ButtonHTMLAttributes<HTMLButtonEle
   );
 }
 
-function ResizeHandle({ hidden }: { hidden?: boolean }) {
+function ResizeHandle({ hidden, label, orientation }: { hidden?: boolean; label: string; orientation: "horizontal" | "vertical" }) {
   if (hidden) return null;
+  const vertical = orientation === "vertical";
   return (
-    <PanelResizeHandle className="group relative flex w-3 shrink-0 cursor-col-resize items-center justify-center self-stretch hover:bg-white/[0.04] transition-colors">
-      <div className="h-16 w-[3px] rounded-full bg-white/15 group-hover:bg-accent/80 transition-colors flex items-center justify-center">
-        <GripVertical className="size-3 text-foreground/0 group-hover:text-foreground/80 transition-colors" />
+    <PanelResizeHandle aria-label={label} className={`group relative flex shrink-0 touch-none items-center justify-center rounded-lg hover:bg-white/[0.04] transition-colors ${vertical ? "h-5 w-full cursor-row-resize" : "w-5 self-stretch cursor-col-resize"}`}>
+      <div className={`rounded-full bg-white/15 group-hover:bg-accent/80 group-data-[separator=active]:bg-accent transition-colors flex items-center justify-center ${vertical ? "h-1 w-16" : "h-16 w-1"}`}>
+        <GripVertical className={`size-3 text-foreground/0 group-hover:text-foreground/80 transition-colors ${vertical ? "rotate-90" : ""}`} />
       </div>
     </PanelResizeHandle>
   );

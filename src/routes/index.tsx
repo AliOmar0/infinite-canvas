@@ -425,10 +425,9 @@ function Index() {
               <Shield className="size-3" aria-hidden /> Runs entirely in your browser
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-12 md:gap-16">
+          <div className="grid grid-cols-2 gap-12 md:gap-16">
             <FooterCol heading="Platform" links={[{ label: "Editor", to: "/editor" }, { label: "Materials", href: "#materials" }, { label: "Lighting", href: "#lighting" }]} />
             <FooterCol heading="Resources" links={[{ label: "Templates", href: "#templates" }, { label: "FAQ", href: "#faq" }]} />
-            <FooterCol heading="Connect" links={[{ label: "Twitter", href: "#" }, { label: "Discord", href: "#" }]} />
           </div>
         </div>
         <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between gap-2 items-start sm:items-center text-[9px] font-mono text-muted-foreground uppercase tracking-[0.2em]">

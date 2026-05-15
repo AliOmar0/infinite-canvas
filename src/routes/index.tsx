@@ -102,91 +102,29 @@ function Index() {
       </nav>
 
       <main id="main">
-        {/* Hero — Wireframe Globe */}
-        <section onMouseMove={onHeroMove} className="relative pt-40 pb-24 px-6 overflow-hidden grain">
-          <div className="aurora-bg" aria-hidden />
-          <div className="grid-bg" aria-hidden />
-          <div className="spotlight" aria-hidden />
-
-          {/* Wireframe globe with orbiting nodes */}
-          <div className="globe-stage" aria-hidden>
-            <div className="globe">
-              <div className="globe-meridian" style={{ transform: "rotateY(0deg)" }} />
-              <div className="globe-meridian" style={{ transform: "rotateY(30deg)" }} />
-              <div className="globe-meridian" style={{ transform: "rotateY(60deg)" }} />
-              <div className="globe-meridian" style={{ transform: "rotateY(90deg)" }} />
-              <div className="globe-meridian" style={{ transform: "rotateY(120deg)" }} />
-              <div className="globe-meridian" style={{ transform: "rotateY(150deg)" }} />
-              <div className="globe-meridian" style={{ transform: "rotateX(30deg)" }} />
-              <div className="globe-meridian" style={{ transform: "rotateX(60deg)" }} />
-              <div className="globe-meridian" style={{ transform: "rotateX(90deg)" }} />
-            </div>
-            <div className="globe-core" />
-            {[0, 60, 120, 180, 240, 300].map((deg, i) => (
-              <span key={deg} className="orbit-node" style={{
-                transform: `translate(-50%,-50%) rotate(${deg}deg) translateX(${44 + (i % 3) * 6}%) rotate(-${deg}deg)`,
-                animationDelay: `${i * -1.5}s`,
-              }} />
-            ))}
-          </div>
-
-          {/* Floating 3D primitive silhouettes */}
-          <svg className="float-shape hidden md:block" style={{ left: "8%", top: "32%", width: 96 }} viewBox="0 0 100 100" fill="none" aria-hidden>
-            <defs>
-              <linearGradient id="cubeG" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="oklch(0.85 0.18 200)" />
-                <stop offset="100%" stopColor="oklch(0.55 0.22 305)" />
-              </linearGradient>
-            </defs>
-            <path d="M50 10 L85 28 L85 70 L50 90 L15 70 L15 28 Z" fill="url(#cubeG)" opacity="0.85" />
-            <path d="M50 10 L85 28 L50 48 L15 28 Z" fill="oklch(1 0 0 / 0.18)" />
-            <path d="M50 48 L85 28 L85 70 L50 90 Z" fill="oklch(0 0 0 / 0.25)" />
-          </svg>
-          <svg className="float-shape float-shape-2 hidden md:block" style={{ right: "9%", top: "26%", width: 84 }} viewBox="0 0 100 100" aria-hidden>
-            <defs>
-              <radialGradient id="sphG" cx="0.35" cy="0.3">
-                <stop offset="0%" stopColor="oklch(1 0 0 / 0.95)" />
-                <stop offset="60%" stopColor="oklch(0.68 0.20 340)" />
-                <stop offset="100%" stopColor="oklch(0.2 0.04 280)" />
-              </radialGradient>
-            </defs>
-            <circle cx="50" cy="50" r="42" fill="url(#sphG)" />
-          </svg>
-          <svg className="float-shape float-shape-3 hidden md:block" style={{ right: "14%", bottom: "24%", width: 110 }} viewBox="0 0 120 80" fill="none" aria-hidden>
-            <ellipse cx="60" cy="40" rx="50" ry="28" stroke="oklch(0.85 0.18 200 / 0.7)" strokeWidth="2" />
-            <ellipse cx="60" cy="40" rx="50" ry="14" stroke="oklch(0.72 0.22 305 / 0.6)" strokeWidth="2" />
-            <ellipse cx="60" cy="40" rx="38" ry="22" stroke="oklch(0.68 0.20 340 / 0.5)" strokeWidth="1.5" />
-          </svg>
-
-          <div className="relative max-w-5xl mx-auto text-center z-10">
-            <div className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-6 animate-reveal [animation-delay:100ms] glass-pill px-3 py-1.5 rounded-full">
-              <span className="size-1.5 rounded-full bg-accent animate-pulse-glow" /> Browser-Native 3D Engine · v0.5
-            </div>
-            <h1 className="text-5xl sm:text-6xl md:text-8xl font-extrabold tracking-tighter text-balance mb-8 animate-reveal [animation-delay:200ms] leading-[0.95]">
+        {/* Hero — Liquid Metal */}
+        <LiquidMetalHero
+          badge="Browser-Native 3D Engine · v0.5"
+          title={
+            <>
               <span className="text-aurora">Infinite Depth.</span>
               <br />
               Browser Native.
-            </h1>
-            <p className="max-w-xl mx-auto text-base text-muted-foreground text-pretty mb-10 animate-reveal [animation-delay:250ms]">
-              A high-performance creative engine for cinematic 3D — materials, lighting, post-FX, all in real time. No installs.
-            </p>
-            <div className="flex flex-col md:flex-row gap-3 justify-center items-center animate-reveal [animation-delay:300ms]">
-              <Link
-                to="/editor"
-                className="px-8 py-4 bg-accent text-accent-foreground font-bold rounded-sm text-xs uppercase tracking-[0.2em] hover:bg-accent/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              >
-                Launch the Studio
-              </Link>
-              <a
-                href="#templates"
-                className="px-8 py-4 border border-border hover:bg-white/5 transition-colors font-bold rounded-sm text-xs uppercase tracking-[0.2em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              >
-                Browse {TEMPLATES.length} Templates
-              </a>
-            </div>
-          </div>
+            </>
+          }
+          subtitle="A high-performance creative engine for cinematic 3D — materials, lighting, post-FX, all in real time. No installs."
+          primaryCtaLabel="Launch the Studio"
+          secondaryCtaLabel={`Browse ${TEMPLATES.length} Templates`}
+          onPrimaryCtaClick={() => navigate({ to: "/editor" })}
+          onSecondaryCtaClick={() => {
+            document.getElementById("templates")?.scrollIntoView({ behavior: "smooth" });
+          }}
+          features={["WebGL 2 · 60 FPS", "20 PBR Materials", "Cinematic Post-FX"]}
+        />
 
-          <div className="mt-20 max-w-7xl mx-auto relative animate-lens [animation-delay:500ms] z-10">
+        {/* Hero render strip */}
+        <section className="relative px-6 pt-4 pb-20">
+          <div className="max-w-7xl mx-auto relative z-10">
             <div className="absolute -inset-1 bg-gradient-to-b from-white/10 to-transparent rounded-xl blur-3xl opacity-30 pointer-events-none" />
             <div className="relative w-full aspect-video rounded-xl glow-ring overflow-hidden bg-card">
               <img

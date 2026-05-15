@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Box, Sparkles, Zap, Layers, Lightbulb, Wand2, Type, Move3d, Cpu, Shield } from "lucide-react";
+import LiquidMetalHero from "@/components/ui/liquid-metal-hero";
 import heroViewport from "@/assets/hero-viewport.jpg";
 import showcase1 from "@/assets/showcase-1.jpg";
 import showcase2 from "@/assets/showcase-2.jpg";

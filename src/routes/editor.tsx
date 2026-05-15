@@ -179,7 +179,7 @@ function EditorPage() {
                   <button
                     key={t.id}
                     onClick={() => { loadTemplate(t); setShowTemplates(false); }}
-                    className="group text-left rounded-md overflow-hidden border border-border hover:border-white/40 transition-all hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="group text-left rounded-xl overflow-hidden liquid-glass hover:border-white/40 transition-all hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <div className="aspect-video relative overflow-hidden" style={{ background: t.background }}>
                       <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/40" />

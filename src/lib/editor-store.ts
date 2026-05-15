@@ -81,6 +81,7 @@ export interface PostFX {
   pixelSize: number;
   dof: boolean;
   dofFocus: number;
+  dofFocalLength: number;
   dofBokeh: number;
 }
 

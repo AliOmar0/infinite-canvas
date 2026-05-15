@@ -162,13 +162,13 @@ function EditorPage() {
                       onChange={(e) => setQuery(e.target.value)}
                       placeholder="Search templates"
                       aria-label="Search templates"
-                      className="bg-white/5 border border-border rounded-sm pl-7 pr-3 py-1.5 text-xs font-mono outline-none focus-visible:ring-2 focus-visible:ring-ring w-48"
+                      className="liquid-glass rounded-full pl-7 pr-3 py-1.5 text-xs font-mono outline-none focus-visible:ring-2 focus-visible:ring-ring w-48"
                     />
                   </div>
                   <button
                     onClick={() => setShowTemplates(false)}
                     aria-label="Close templates"
-                    className="p-1.5 border border-border rounded-sm hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="p-2 glass-pill rounded-full hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <X className="size-3.5" />
                   </button>

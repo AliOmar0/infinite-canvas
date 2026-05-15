@@ -117,8 +117,8 @@ export function SceneTree() {
         })}
 
         {lights.length > 0 && (
-          <div className="mt-2 px-4 pt-2 pb-1 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground border-t border-border">
-            Lights
+          <div className="mt-3 mx-2 px-1 pt-2 pb-1 font-mono text-[9px] uppercase tracking-[0.24em] text-foreground/40 border-t border-white/5 flex items-center gap-2">
+            <span className="size-1 rounded-full bg-amber-300/80" /> Lights
           </div>
         )}
         {lights.map((l) => {
@@ -129,8 +129,10 @@ export function SceneTree() {
               key={l.id}
               onClick={() => selectLight(l.id)}
               className={cn(
-                "group flex items-center gap-2 px-4 py-1.5 cursor-pointer text-xs font-mono transition-colors",
-                active ? "bg-white/10 text-foreground" : "text-muted-foreground hover:bg-white/5",
+                "group relative flex items-center gap-2 mx-2 my-0.5 px-2.5 py-1.5 rounded-md cursor-pointer text-[11px] font-mono tracking-wide transition-all",
+                active
+                  ? "bg-gradient-to-r from-amber-300/15 to-transparent text-foreground ring-1 ring-amber-300/30"
+                  : "text-foreground/55 hover:text-foreground hover:bg-white/[0.04]",
               )}
             >
               <Icon className="size-3 shrink-0" style={{ color: l.color }} aria-hidden />

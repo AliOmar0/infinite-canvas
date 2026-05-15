@@ -6,6 +6,7 @@ import { Viewport } from "@/components/editor/Viewport";
 import { SceneTree } from "@/components/editor/SceneTree";
 import { Properties } from "@/components/editor/Properties";
 import { CommandPalette } from "@/components/editor/CommandPalette";
+import { TemplatePreview } from "@/components/editor/TemplatePreview";
 import { useEditor } from "@/lib/editor-store";
 import { TEMPLATES } from "@/lib/templates";
 
@@ -204,7 +205,7 @@ function EditorPage() {
             id="left"
             defaultSize={22}
             minSize={14}
-            maxSize={34}
+            maxSize={50}
             collapsible
             collapsedSize={0}
             className="rounded-xl liquid-glass overflow-hidden"
@@ -240,10 +241,10 @@ function EditorPage() {
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {filtered.map((t) => (
                       <button key={t.id} onClick={() => { loadTemplate(t); setShowTemplates(false); }} className="group text-left rounded-xl overflow-hidden liquid-glass hover:border-white/40 transition-all hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                        <div className="aspect-video relative overflow-hidden" style={{ background: t.background }}>
-                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/40" />
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="font-mono text-xs md:text-sm uppercase tracking-[0.3em] text-white/85 mix-blend-difference text-center px-2">{t.name}</div>
+                        <div className="aspect-video relative overflow-hidden">
+                          <TemplatePreview t={t} />
+                          <div className="absolute inset-x-0 bottom-0 px-2.5 py-1.5 bg-gradient-to-t from-black/70 to-transparent">
+                            <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/90 truncate">{t.name}</div>
                           </div>
                         </div>
                         <div className="px-3 py-2.5 bg-card flex items-center justify-between gap-2">
@@ -299,7 +300,7 @@ function EditorPage() {
             id="right"
             defaultSize={22}
             minSize={16}
-            maxSize={34}
+            maxSize={50}
             collapsible
             collapsedSize={0}
             className="rounded-xl liquid-glass overflow-hidden"

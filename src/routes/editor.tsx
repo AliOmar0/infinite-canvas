@@ -236,7 +236,7 @@ function EditorPage() {
           )}
         </main>
 
-        <aside className="w-72 border-l border-border shrink-0 bg-background" aria-label="Properties panel">
+        <aside className="w-72 shrink-0 rounded-xl liquid-glass overflow-hidden" aria-label="Properties panel">
           <Properties />
         </aside>
       </div>

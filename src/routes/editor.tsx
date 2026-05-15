@@ -205,7 +205,7 @@ function EditorPage() {
             id="left"
             defaultSize={22}
             minSize={14}
-            maxSize={50}
+            maxSize={60}
             collapsible
             collapsedSize={0}
             className="rounded-xl liquid-glass overflow-hidden"
@@ -300,7 +300,7 @@ function EditorPage() {
             id="right"
             defaultSize={22}
             minSize={16}
-            maxSize={50}
+            maxSize={60}
             collapsible
             collapsedSize={0}
             className="rounded-xl liquid-glass overflow-hidden"

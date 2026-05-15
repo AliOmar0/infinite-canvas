@@ -26,6 +26,9 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
@@ -37,6 +40,7 @@ jobs:
 
       - name: Add SPA fallback (404 -> index)
         run: |
+          test -f dist/client/index.html
           if [ -f dist/client/index.html ]; then
             cp dist/client/index.html dist/client/404.html
           fi

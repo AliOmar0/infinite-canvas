@@ -350,12 +350,13 @@ function IconBtn({ children, ...rest }: React.ButtonHTMLAttributes<HTMLButtonEle
   );
 }
 
-function ResizeHandle({ hidden, label }: { hidden?: boolean; label: string }) {
+function ResizeHandle({ hidden, label, orientation }: { hidden?: boolean; label: string; orientation: "horizontal" | "vertical" }) {
   if (hidden) return null;
+  const vertical = orientation === "vertical";
   return (
-    <PanelResizeHandle aria-label={label} className="group relative flex w-5 shrink-0 cursor-col-resize touch-none items-center justify-center self-stretch rounded-lg hover:bg-white/[0.04] transition-colors">
-      <div className="h-16 w-1 rounded-full bg-white/15 group-hover:bg-accent/80 group-data-[separator=active]:bg-accent transition-colors flex items-center justify-center">
-        <GripVertical className="size-3 text-foreground/0 group-hover:text-foreground/80 transition-colors" />
+    <PanelResizeHandle aria-label={label} className={`group relative flex shrink-0 touch-none items-center justify-center rounded-lg hover:bg-white/[0.04] transition-colors ${vertical ? "h-5 w-full cursor-row-resize" : "w-5 self-stretch cursor-col-resize"}`}>
+      <div className={`rounded-full bg-white/15 group-hover:bg-accent/80 group-data-[separator=active]:bg-accent transition-colors flex items-center justify-center ${vertical ? "h-1 w-16" : "h-16 w-1"}`}>
+        <GripVertical className={`size-3 text-foreground/0 group-hover:text-foreground/80 transition-colors ${vertical ? "rotate-90" : ""}`} />
       </div>
     </PanelResizeHandle>
   );

@@ -157,8 +157,9 @@ const defaultFx: PostFX = {
   pixelate: false,
   pixelSize: 6,
   dof: false,
-  dofFocus: 8,
-  dofBokeh: 3,
+  dofFocus: 0.1,
+  dofFocalLength: 0.05,
+  dofBokeh: 5,
 };
 
 const baseObjectDefaults = {

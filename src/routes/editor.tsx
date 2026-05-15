@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
-import { ImperativePanelHandle, PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
+import { Group as PanelGroup, Panel, Separator as PanelResizeHandle, type PanelImperativeHandle } from "react-resizable-panels";
 import { Play, Pause, Download, RotateCcw, LayoutGrid, X, Search, Keyboard, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Maximize2, Minimize2, Save, Upload, Command as CommandIcon, GripVertical } from "lucide-react";
 import { Viewport } from "@/components/editor/Viewport";
 import { SceneTree } from "@/components/editor/SceneTree";
@@ -40,8 +40,8 @@ function EditorPage() {
   const [query, setQuery] = useState("");
   const [toast, setToast] = useState<string | null>(null);
 
-  const leftRef = useRef<ImperativePanelHandle>(null);
-  const rightRef = useRef<ImperativePanelHandle>(null);
+  const leftRef = useRef<PanelImperativeHandle | null>(null);
+  const rightRef = useRef<PanelImperativeHandle | null>(null);
   const [leftCollapsed, setLeftCollapsed] = useState(false);
   const [rightCollapsed, setRightCollapsed] = useState(false);
   const focusMode = leftCollapsed && rightCollapsed;
@@ -53,16 +53,18 @@ function EditorPage() {
 
   const toggleLeft = useCallback(() => {
     const p = leftRef.current; if (!p) return;
-    p.isCollapsed() ? p.expand() : p.collapse();
+    if (p.isCollapsed()) { p.expand(); setLeftCollapsed(false); }
+    else { p.collapse(); setLeftCollapsed(true); }
   }, []);
   const toggleRight = useCallback(() => {
     const p = rightRef.current; if (!p) return;
-    p.isCollapsed() ? p.expand() : p.collapse();
+    if (p.isCollapsed()) { p.expand(); setRightCollapsed(false); }
+    else { p.collapse(); setRightCollapsed(true); }
   }, []);
   const toggleFocus = useCallback(() => {
     const l = leftRef.current, r = rightRef.current; if (!l || !r) return;
-    if (l.isCollapsed() && r.isCollapsed()) { l.expand(); r.expand(); }
-    else { l.collapse(); r.collapse(); }
+    if (l.isCollapsed() && r.isCollapsed()) { l.expand(); r.expand(); setLeftCollapsed(false); setRightCollapsed(false); }
+    else { l.collapse(); r.collapse(); setLeftCollapsed(true); setRightCollapsed(true); }
   }, []);
 
   const filtered = useMemo(() => {
@@ -196,24 +198,21 @@ function EditorPage() {
       </header>
 
       <div className="flex-1 min-h-0 relative p-2 pt-2">
-        <PanelGroup direction="horizontal" autoSaveId="infinite-studio-layout" className="gap-2">
+        <PanelGroup orientation="horizontal" id="infinite-studio-layout" className="gap-2 flex h-full w-full">
           <Panel
-            ref={leftRef}
+            panelRef={leftRef}
             id="left"
-            order={1}
             defaultSize={18}
             minSize={14}
             maxSize={32}
             collapsible
             collapsedSize={0}
-            onCollapse={() => setLeftCollapsed(true)}
-            onExpand={() => setLeftCollapsed(false)}
             className="rounded-xl liquid-glass overflow-hidden"
           >
             <div className="h-full min-w-[14rem]"><SceneTree /></div>
           </Panel>
           <ResizeHandle hidden={leftCollapsed} />
-          <Panel id="center" order={2} minSize={30} className="relative">
+          <Panel id="center" minSize={30} className="relative">
             <main id="viewport-region" className="absolute inset-0 bg-card rounded-xl overflow-hidden border border-border" aria-label="3D viewport">
               <Viewport />
               <div className="absolute top-3 left-4 font-mono text-[10px] tracking-[0.2em] text-foreground/60 pointer-events-none select-none px-2 py-1 rounded glass-pill">
@@ -296,16 +295,13 @@ function EditorPage() {
           </Panel>
           <ResizeHandle hidden={rightCollapsed} />
           <Panel
-            ref={rightRef}
+            panelRef={rightRef}
             id="right"
-            order={3}
             defaultSize={20}
             minSize={16}
             maxSize={34}
             collapsible
             collapsedSize={0}
-            onCollapse={() => setRightCollapsed(true)}
-            onExpand={() => setRightCollapsed(false)}
             className="rounded-xl liquid-glass overflow-hidden"
           >
             <div className="h-full min-w-[16rem]"><Properties /></div>
@@ -339,12 +335,10 @@ function IconBtn({ children, ...rest }: React.ButtonHTMLAttributes<HTMLButtonEle
 }
 
 function ResizeHandle({ hidden }: { hidden?: boolean }) {
+  if (hidden) return null;
   return (
-    <PanelResizeHandle
-      className={`group relative flex w-2 items-center justify-center transition-opacity ${hidden ? "opacity-0 pointer-events-none w-0" : ""}`}
-      aria-label="Resize panel"
-    >
-      <div className="h-12 w-1 rounded-full bg-white/10 group-hover:bg-accent/60 group-data-[resize-handle-state=drag]:bg-accent transition-colors flex items-center justify-center">
+    <PanelResizeHandle className="group relative flex w-2 items-center justify-center">
+      <div className="h-12 w-1 rounded-full bg-white/10 group-hover:bg-accent/60 transition-colors flex items-center justify-center">
         <GripVertical className="size-3 text-white/40 group-hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
     </PanelResizeHandle>

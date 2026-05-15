@@ -58,8 +58,16 @@ function Index() {
     [tagFilter]
   );
 
+  // Cursor spotlight tracking for hero
+  const onHeroMove = (e: React.MouseEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty("--x", `${((e.clientX - rect.left) / rect.width) * 100}%`);
+    e.currentTarget.style.setProperty("--y", `${((e.clientY - rect.top) / rect.height) * 100}%`);
+  };
+
   return (
-    <div className="bg-background text-foreground font-display min-h-screen">
+    <div className="bg-background text-foreground font-display min-h-screen relative">
+      <div className="mesh-bg" aria-hidden />
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-foreground focus:text-background focus:px-3 focus:py-1 focus:rounded">
         Skip to content
       </a>

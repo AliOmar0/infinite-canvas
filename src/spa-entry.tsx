@@ -6,8 +6,7 @@ import { getRouter } from "./router";
 import "./styles.css";
 
 const router = getRouter();
-// @ts-expect-error - access internal queryClient from context to provide it at root
-const queryClient = router.options.context.queryClient;
+const queryClient = (router.options.context as { queryClient: import("@tanstack/react-query").QueryClient }).queryClient;
 
 const rootEl = document.getElementById("root");
 if (!rootEl) throw new Error("Missing #root element");

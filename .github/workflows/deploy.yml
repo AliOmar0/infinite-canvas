@@ -40,18 +40,16 @@ jobs:
 
       - name: Add SPA fallback (404 -> index)
         run: |
-          test -f dist/client/index.html
-          if [ -f dist/client/index.html ]; then
-            cp dist/client/index.html dist/client/404.html
-          fi
+          test -f dist-spa/index.html
+          cp dist-spa/index.html dist-spa/404.html
 
       - name: Disable Jekyll
-        run: touch dist/client/.nojekyll
+        run: touch dist-spa/.nojekyll
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/client
+          path: dist-spa
 
   deploy:
     needs: build

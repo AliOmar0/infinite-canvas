@@ -68,6 +68,9 @@ function EditorPage() {
       if (e.key === " ") { e.preventDefault(); togglePlaying(); }
       if (e.key === "t" || e.key === "T") setShowTemplates((v) => !v);
       if (e.key === "?") setShowShortcuts((v) => !v);
+      if (e.key === "[") setLeftOpen((v) => !v);
+      if (e.key === "]") setRightOpen((v) => !v);
+      if (e.key === "f" || e.key === "F") toggleFocus();
       if ((e.key === "Delete" || e.key === "Backspace")) {
         if (selectedId) removeObject(selectedId);
         else if (selectedLightId) removeLight(selectedLightId);

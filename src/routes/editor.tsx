@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useMemo, useEffect } from "react";
-import { Play, Pause, Download, RotateCcw, LayoutGrid, X, Search, Keyboard, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Maximize2, Minimize2 } from "lucide-react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { Group as PanelGroup, Panel, Separator as PanelResizeHandle, type PanelImperativeHandle } from "react-resizable-panels";
+import { Play, Pause, Download, RotateCcw, LayoutGrid, X, Search, Keyboard, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Maximize2, Minimize2, Save, Upload, Command as CommandIcon, GripVertical } from "lucide-react";
 import { Viewport } from "@/components/editor/Viewport";
 import { SceneTree } from "@/components/editor/SceneTree";
 import { Properties } from "@/components/editor/Properties";
+import { CommandPalette } from "@/components/editor/CommandPalette";
 import { useEditor } from "@/lib/editor-store";
 import { TEMPLATES } from "@/lib/templates";
 
@@ -29,17 +31,41 @@ function EditorPage() {
   const duplicateObject = useEditor((s) => s.duplicateObject);
   const selectedId = useEditor((s) => s.selectedId);
   const selectedLightId = useEditor((s) => s.selectedLightId);
+  const serializeScene = useEditor((s) => s.serializeScene);
+  const loadSceneJSON = useEditor((s) => s.loadSceneJSON);
 
   const [showTemplates, setShowTemplates] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [showPalette, setShowPalette] = useState(false);
   const [query, setQuery] = useState("");
-  const [leftOpen, setLeftOpen] = useState(true);
-  const [rightOpen, setRightOpen] = useState(true);
-  const focusMode = !leftOpen && !rightOpen;
-  const toggleFocus = () => {
-    if (focusMode) { setLeftOpen(true); setRightOpen(true); }
-    else { setLeftOpen(false); setRightOpen(false); }
+  const [toast, setToast] = useState<string | null>(null);
+
+  const leftRef = useRef<PanelImperativeHandle | null>(null);
+  const rightRef = useRef<PanelImperativeHandle | null>(null);
+  const [leftCollapsed, setLeftCollapsed] = useState(false);
+  const [rightCollapsed, setRightCollapsed] = useState(false);
+  const focusMode = leftCollapsed && rightCollapsed;
+
+  const flash = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 1800);
   };
+
+  const toggleLeft = useCallback(() => {
+    const p = leftRef.current; if (!p) return;
+    if (p.isCollapsed()) { p.expand(); setLeftCollapsed(false); }
+    else { p.collapse(); setLeftCollapsed(true); }
+  }, []);
+  const toggleRight = useCallback(() => {
+    const p = rightRef.current; if (!p) return;
+    if (p.isCollapsed()) { p.expand(); setRightCollapsed(false); }
+    else { p.collapse(); setRightCollapsed(true); }
+  }, []);
+  const toggleFocus = useCallback(() => {
+    const l = leftRef.current, r = rightRef.current; if (!l || !r) return;
+    if (l.isCollapsed() && r.isCollapsed()) { l.expand(); r.expand(); setLeftCollapsed(false); setRightCollapsed(false); }
+    else { l.collapse(); r.collapse(); setLeftCollapsed(true); setRightCollapsed(true); }
+  }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -57,20 +83,61 @@ function EditorPage() {
     a.href = url;
     a.download = `infinite-studio-${Date.now()}.png`;
     a.click();
+    flash("PNG exported");
   };
+
+  const saveScene = () => {
+    const json = serializeScene();
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `infinite-scene-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    flash("Scene saved");
+  };
+
+  const loadScene = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json,.json";
+    input.onchange = async () => {
+      const f = input.files?.[0]; if (!f) return;
+      const text = await f.text();
+      flash(loadSceneJSON(text) ? "Scene loaded" : "Invalid scene file");
+    };
+    input.click();
+  };
+
+  // Try loading scene from URL hash (#scene=base64) on mount
+  useEffect(() => {
+    const h = window.location.hash;
+    const m = h.match(/scene=([^&]+)/);
+    if (m) {
+      try {
+        const json = decodeURIComponent(escape(atob(decodeURIComponent(m[1]))));
+        if (loadSceneJSON(json)) flash("Loaded shared scene");
+      } catch { /* ignore */ }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Keyboard shortcuts
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
-      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)) return;
-      if (e.key === "Escape") { setShowTemplates(false); setShowShortcuts(false); }
+      const inField = target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable);
+      if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) { e.preventDefault(); setShowPalette((v) => !v); return; }
+      if (inField) return;
+      if (e.key === "Escape") { setShowTemplates(false); setShowShortcuts(false); setShowPalette(false); }
       if (e.key === " ") { e.preventDefault(); togglePlaying(); }
       if (e.key === "t" || e.key === "T") setShowTemplates((v) => !v);
       if (e.key === "?") setShowShortcuts((v) => !v);
-      if (e.key === "[") setLeftOpen((v) => !v);
-      if (e.key === "]") setRightOpen((v) => !v);
+      if (e.key === "[") toggleLeft();
+      if (e.key === "]") toggleRight();
       if (e.key === "f" || e.key === "F") toggleFocus();
+      if ((e.metaKey || e.ctrlKey) && (e.key === "s" || e.key === "S")) { e.preventDefault(); saveScene(); }
       if ((e.key === "Delete" || e.key === "Backspace")) {
         if (selectedId) removeObject(selectedId);
         else if (selectedLightId) removeLight(selectedLightId);
@@ -81,7 +148,8 @@ function EditorPage() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [togglePlaying, selectedId, selectedLightId, removeObject, removeLight, duplicateObject]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [togglePlaying, selectedId, selectedLightId]);
 
   return (
     <div className="h-screen w-screen flex flex-col bg-background text-foreground overflow-hidden">
@@ -89,8 +157,8 @@ function EditorPage() {
         Skip to viewport
       </a>
       <header className="h-14 flex items-center justify-between px-3 shrink-0 m-2 mb-0 rounded-xl liquid-glass">
-        <div className="flex items-center gap-4 pl-2">
-          <Link to="/" className="font-mono text-xs tracking-tighter uppercase font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm flex items-center gap-2">
+        <div className="flex items-center gap-4 pl-2 min-w-0">
+          <Link to="/" className="font-mono text-xs tracking-tighter uppercase font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm flex items-center gap-2 shrink-0">
             <span className="size-2 rounded-full bg-accent animate-pulse-glow" />
             Infinite Studio
           </Link>
@@ -100,192 +168,179 @@ function EditorPage() {
             <span className={playing ? "text-accent" : ""}>{playing ? "LIVE" : "PAUSED"}</span>
           </span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <button
-            onClick={() => setLeftOpen((v) => !v)}
-            aria-label={leftOpen ? "Hide scene panel" : "Show scene panel"}
-            className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            title={leftOpen ? "Hide scene panel ([)" : "Show scene panel ([)"}
-          >
-            {leftOpen ? <PanelLeftClose className="size-3.5" /> : <PanelLeftOpen className="size-3.5" />}
+        <div className="flex items-center gap-1.5 flex-wrap justify-end">
+          <button onClick={() => setShowPalette(true)} className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 glass-pill rounded-full text-[10px] font-mono uppercase tracking-[0.2em] hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" title="Command palette (⌘K)">
+            <CommandIcon className="size-3" /> <span>K</span>
           </button>
-          <button
-            onClick={() => setRightOpen((v) => !v)}
-            aria-label={rightOpen ? "Hide properties panel" : "Show properties panel"}
-            className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            title={rightOpen ? "Hide properties ( ] )" : "Show properties ( ] )"}
-          >
-            {rightOpen ? <PanelRightClose className="size-3.5" /> : <PanelRightOpen className="size-3.5" />}
-          </button>
-          <button
-            onClick={toggleFocus}
-            aria-label={focusMode ? "Exit focus mode" : "Focus mode"}
-            className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            title={focusMode ? "Exit focus (F)" : "Focus mode (F)"}
-          >
+          <span className="w-px h-5 bg-white/10 mx-1 hidden md:block" aria-hidden />
+          <IconBtn onClick={toggleLeft} title={leftCollapsed ? "Show scene panel ([)" : "Hide scene panel ([)"}>
+            {leftCollapsed ? <PanelLeftOpen className="size-3.5" /> : <PanelLeftClose className="size-3.5" />}
+          </IconBtn>
+          <IconBtn onClick={toggleRight} title={rightCollapsed ? "Show properties (])" : "Hide properties (])"}>
+            {rightCollapsed ? <PanelRightOpen className="size-3.5" /> : <PanelRightClose className="size-3.5" />}
+          </IconBtn>
+          <IconBtn onClick={toggleFocus} title={focusMode ? "Exit focus (F)" : "Focus mode (F)"}>
             {focusMode ? <Minimize2 className="size-3.5" /> : <Maximize2 className="size-3.5" />}
-          </button>
+          </IconBtn>
           <span className="w-px h-5 bg-white/10 mx-1" aria-hidden />
-          <button
-            onClick={() => setShowShortcuts(true)}
-            aria-label="Keyboard shortcuts"
-            className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            title="Keyboard shortcuts (?)"
-          >
-            <Keyboard className="size-3.5" />
-          </button>
-          <button
-            onClick={() => setShowTemplates((v) => !v)}
-            className="px-3 py-1.5 glass-pill rounded-full text-[10px] font-mono uppercase tracking-[0.2em] hover:bg-white/10 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
+          <IconBtn onClick={() => setShowShortcuts(true)} title="Keyboard shortcuts (?)"><Keyboard className="size-3.5" /></IconBtn>
+          <IconBtn onClick={saveScene} title="Save scene (⌘S)"><Save className="size-3.5" /></IconBtn>
+          <IconBtn onClick={loadScene} title="Load scene"><Upload className="size-3.5" /></IconBtn>
+          <button onClick={() => setShowTemplates((v) => !v)} className="px-3 py-1.5 glass-pill rounded-full text-[10px] font-mono uppercase tracking-[0.2em] hover:bg-white/10 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             <LayoutGrid className="size-3" aria-hidden /> Templates
           </button>
-          <button
-            onClick={togglePlaying}
-            aria-label={playing ? "Pause animation" : "Play animation"}
-            className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            title={playing ? "Pause (space)" : "Play (space)"}
-          >
-            {playing ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
+          <IconBtn onClick={togglePlaying} title={playing ? "Pause (space)" : "Play (space)"}>{playing ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}</IconBtn>
+          <button onClick={exportPng} className="px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-[10px] font-mono uppercase tracking-[0.2em] font-bold hover:opacity-90 transition flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <Download className="size-3" aria-hidden /> Export
           </button>
-          <button
-            onClick={exportPng}
-            className="px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-[10px] font-mono uppercase tracking-[0.2em] font-bold hover:opacity-90 transition flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <Download className="size-3" aria-hidden /> Export PNG
-          </button>
-          <button
-            onClick={reset}
-            aria-label="Reset scene"
-            className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            title="Reset scene"
-          >
-            <RotateCcw className="size-3.5" />
-          </button>
+          <IconBtn onClick={reset} title="Reset scene"><RotateCcw className="size-3.5" /></IconBtn>
         </div>
       </header>
 
-      <div className="flex-1 flex min-h-0 relative gap-2 p-2 pt-2">
-        <aside
-          className={`shrink-0 rounded-xl liquid-glass overflow-hidden transition-[width,opacity,margin] duration-300 ease-out ${leftOpen ? "w-60 opacity-100" : "w-0 opacity-0 -ml-2 pointer-events-none"}`}
-          aria-label="Scene tree"
-          aria-hidden={!leftOpen}
-        >
-          <SceneTree />
-        </aside>
+      <div className="flex-1 min-h-0 relative p-2 pt-2">
+        <PanelGroup orientation="horizontal" id="infinite-studio-layout" className="gap-2 flex h-full w-full">
+          <Panel
+            panelRef={leftRef}
+            id="left"
+            defaultSize={18}
+            minSize={14}
+            maxSize={32}
+            collapsible
+            collapsedSize={0}
+            className="rounded-xl liquid-glass overflow-hidden"
+          >
+            <div className="h-full min-w-[14rem]"><SceneTree /></div>
+          </Panel>
+          <ResizeHandle hidden={leftCollapsed} />
+          <Panel id="center" minSize={30} className="relative">
+            <main id="viewport-region" className="absolute inset-0 bg-card rounded-xl overflow-hidden border border-border" aria-label="3D viewport">
+              <Viewport />
+              <div className="absolute top-3 left-4 font-mono text-[10px] tracking-[0.2em] text-foreground/60 pointer-events-none select-none px-2 py-1 rounded glass-pill">
+                VIEWPORT_01 · DRAG TO ORBIT
+              </div>
+              <div className="absolute bottom-3 right-4 font-mono text-[10px] tracking-[0.2em] text-foreground/60 pointer-events-none select-none px-2 py-1 rounded glass-pill">
+                WEBGL · REALTIME
+              </div>
 
-        <main id="viewport-region" className="flex-1 relative bg-card min-w-0 rounded-xl overflow-hidden border border-border" aria-label="3D viewport">
-          <Viewport />
-          <div className="absolute top-3 left-4 font-mono text-[10px] tracking-[0.2em] text-foreground/60 pointer-events-none select-none px-2 py-1 rounded glass-pill">
-            VIEWPORT_01 · DRAG TO ORBIT
-          </div>
-          <div className="absolute bottom-3 right-4 font-mono text-[10px] tracking-[0.2em] text-foreground/60 pointer-events-none select-none px-2 py-1 rounded glass-pill">
-            WEBGL · REALTIME
-          </div>
-
-          {showTemplates && (
-            <div role="dialog" aria-modal="true" aria-label="Templates" className="absolute inset-0 bg-background/70 backdrop-blur-2xl z-30 overflow-y-auto p-8 animate-fade-in">
-              <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
-                <div>
-                  <h2 className="font-mono text-xs uppercase tracking-[0.3em]">Choose a template</h2>
-                  <p className="text-[10px] font-mono text-muted-foreground mt-1 tracking-wider">
-                    {filtered.length} OF {TEMPLATES.length} PRESETS
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="relative">
-                    <Search className="size-3 absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden />
-                    <input
-                      type="search"
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      placeholder="Search templates"
-                      aria-label="Search templates"
-                      className="liquid-glass rounded-full pl-7 pr-3 py-1.5 text-xs font-mono outline-none focus-visible:ring-2 focus-visible:ring-ring w-48"
-                    />
+              {showTemplates && (
+                <div role="dialog" aria-modal="true" aria-label="Templates" className="absolute inset-0 bg-background/70 backdrop-blur-2xl z-30 overflow-y-auto p-8 animate-fade-in">
+                  <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
+                    <div>
+                      <h2 className="font-mono text-xs uppercase tracking-[0.3em]">Choose a template</h2>
+                      <p className="text-[10px] font-mono text-muted-foreground mt-1 tracking-wider">{filtered.length} OF {TEMPLATES.length} PRESETS</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="relative">
+                        <Search className="size-3 absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden />
+                        <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search templates" aria-label="Search templates" className="liquid-glass rounded-full pl-7 pr-3 py-1.5 text-xs font-mono outline-none focus-visible:ring-2 focus-visible:ring-ring w-48" />
+                      </div>
+                      <IconBtn onClick={() => setShowTemplates(false)} title="Close"><X className="size-3.5" /></IconBtn>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => setShowTemplates(false)}
-                    aria-label="Close templates"
-                    className="p-2 glass-pill rounded-full hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <X className="size-3.5" />
-                  </button>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {filtered.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => { loadTemplate(t); setShowTemplates(false); }}
-                    className="group text-left rounded-xl overflow-hidden liquid-glass hover:border-white/40 transition-all hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <div className="aspect-video relative overflow-hidden" style={{ background: t.background }}>
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/40" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="font-mono text-xs md:text-sm uppercase tracking-[0.3em] text-white/85 mix-blend-difference text-center px-2">{t.name}</div>
-                      </div>
-                    </div>
-                    <div className="px-3 py-2.5 bg-card flex items-center justify-between gap-2">
-                      <div className="min-w-0">
-                        <div className="text-xs font-bold truncate">{t.name}</div>
-                        <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground mt-1 truncate">
-                          {t.tags.join(" · ")}
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {filtered.map((t) => (
+                      <button key={t.id} onClick={() => { loadTemplate(t); setShowTemplates(false); }} className="group text-left rounded-xl overflow-hidden liquid-glass hover:border-white/40 transition-all hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        <div className="aspect-video relative overflow-hidden" style={{ background: t.background }}>
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/40" />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="font-mono text-xs md:text-sm uppercase tracking-[0.3em] text-white/85 mix-blend-difference text-center px-2">{t.name}</div>
+                          </div>
                         </div>
-                      </div>
-                      <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground transition-colors shrink-0">→</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-              {filtered.length === 0 && (
-                <div className="py-20 text-center font-mono text-xs text-muted-foreground">No templates match "{query}"</div>
-              )}
-            </div>
-          )}
-
-          {showShortcuts && (
-            <div role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" className="absolute inset-0 bg-background/60 backdrop-blur-2xl z-30 flex items-center justify-center p-8 animate-fade-in">
-              <div className="max-w-md w-full liquid-glass-strong rounded-2xl p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="font-mono text-xs uppercase tracking-[0.3em]">Shortcuts</h2>
-                  <button onClick={() => setShowShortcuts(false)} aria-label="Close" className="p-2 glass-pill rounded-full hover:bg-white/10">
-                    <X className="size-3.5" />
-                  </button>
+                        <div className="px-3 py-2.5 bg-card flex items-center justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="text-xs font-bold truncate">{t.name}</div>
+                            <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground mt-1 truncate">{t.tags.join(" · ")}</div>
+                          </div>
+                          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground transition-colors shrink-0">→</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                  {filtered.length === 0 && <div className="py-20 text-center font-mono text-xs text-muted-foreground">No templates match "{query}"</div>}
                 </div>
-                <ul className="space-y-2 text-xs font-mono">
-                  {[
-                    ["Space", "Play / pause"],
-                    ["T", "Templates"],
-                    ["Del / Bksp", "Delete selected"],
-                    ["Cmd/Ctrl + D", "Duplicate selected"],
-                    ["[", "Toggle scene panel"],
-                    ["]", "Toggle properties"],
-                    ["F", "Focus mode (hide both)"],
-                    ["Esc", "Close panel"],
-                    ["?", "This dialog"],
-                    ["Drag viewport", "Orbit camera"],
-                    ["Scroll viewport", "Zoom"],
-                  ].map(([k, d]) => (
-                    <li key={k} className="flex justify-between border-b border-border pb-1.5">
-                      <kbd className="px-1.5 py-0.5 bg-white/5 rounded text-[10px]">{k}</kbd>
-                      <span className="text-muted-foreground">{d}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
-        </main>
+              )}
 
-        <aside
-          className={`shrink-0 rounded-xl liquid-glass overflow-hidden transition-[width,opacity,margin] duration-300 ease-out ${rightOpen ? "w-72 opacity-100" : "w-0 opacity-0 -mr-2 pointer-events-none"}`}
-          aria-label="Properties panel"
-          aria-hidden={!rightOpen}
-        >
-          <Properties />
-        </aside>
+              {showShortcuts && (
+                <div role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" className="absolute inset-0 bg-background/60 backdrop-blur-2xl z-30 flex items-center justify-center p-8 animate-fade-in">
+                  <div className="max-w-md w-full liquid-glass-strong rounded-2xl p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="font-mono text-xs uppercase tracking-[0.3em]">Shortcuts</h2>
+                      <IconBtn onClick={() => setShowShortcuts(false)} title="Close"><X className="size-3.5" /></IconBtn>
+                    </div>
+                    <ul className="space-y-2 text-xs font-mono">
+                      {[
+                        ["⌘/Ctrl + K", "Command palette"],
+                        ["Space", "Play / pause"],
+                        ["T", "Templates"],
+                        ["⌘/Ctrl + S", "Save scene JSON"],
+                        ["Del / Bksp", "Delete selected"],
+                        ["⌘/Ctrl + D", "Duplicate selected"],
+                        ["[", "Toggle scene panel"],
+                        ["]", "Toggle properties"],
+                        ["F", "Focus mode (hide both)"],
+                        ["Esc", "Close panel"],
+                        ["?", "This dialog"],
+                        ["Drag handles", "Resize panels"],
+                      ].map(([k, d]) => (
+                        <li key={k} className="flex justify-between border-b border-border pb-1.5">
+                          <kbd className="px-1.5 py-0.5 bg-white/5 rounded text-[10px]">{k}</kbd>
+                          <span className="text-muted-foreground">{d}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </main>
+          </Panel>
+          <ResizeHandle hidden={rightCollapsed} />
+          <Panel
+            panelRef={rightRef}
+            id="right"
+            defaultSize={20}
+            minSize={16}
+            maxSize={34}
+            collapsible
+            collapsedSize={0}
+            className="rounded-xl liquid-glass overflow-hidden"
+          >
+            <div className="h-full min-w-[16rem]"><Properties /></div>
+          </Panel>
+        </PanelGroup>
       </div>
+
+      <CommandPalette
+        open={showPalette}
+        onOpenChange={setShowPalette}
+        onExportPng={exportPng}
+        onSaveScene={saveScene}
+        onLoadScene={loadScene}
+      />
+
+      {toast && (
+        <div role="status" aria-live="polite" className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 liquid-glass-strong rounded-full px-4 py-2 font-mono text-[11px] uppercase tracking-[0.24em] animate-fade-in">
+          {toast}
+        </div>
+      )}
     </div>
+  );
+}
+
+function IconBtn({ children, ...rest }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button {...rest} className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+      {children}
+    </button>
+  );
+}
+
+function ResizeHandle({ hidden }: { hidden?: boolean }) {
+  if (hidden) return null;
+  return (
+    <PanelResizeHandle className="group relative flex w-2 items-center justify-center">
+      <div className="h-12 w-1 rounded-full bg-white/10 group-hover:bg-accent/60 transition-colors flex items-center justify-center">
+        <GripVertical className="size-3 text-white/40 group-hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+      </div>
+    </PanelResizeHandle>
   );
 }

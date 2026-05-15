@@ -93,15 +93,24 @@ function Index() {
       </nav>
 
       <main id="main">
-        {/* Hero */}
-        <section className="relative pt-40 pb-20 px-6 overflow-hidden grain spotlight">
-          <div className="lamp-cone" aria-hidden />
-          <div className="lamp-line" aria-hidden />
+        {/* Hero — Orbital Beacon */}
+        <section className="relative pt-40 pb-20 px-6 overflow-hidden grain">
           <div className="aurora-bg" aria-hidden />
           <div className="grid-bg" aria-hidden />
-          <div className="relative max-w-5xl mx-auto text-center">
+          <div className="beacon" aria-hidden>
+            <div className="beacon-conic" />
+            <div className="beacon-orb" />
+            <div className="beacon-ring beacon-ring-1" />
+            <div className="beacon-ring beacon-ring-2" />
+            <div className="beacon-ring beacon-ring-3" />
+          </div>
+          <div className="beam-stack" aria-hidden>
+            <span className="beam beam-a" /><span className="beam beam-b" /><span className="beam beam-c" />
+          </div>
+
+          <div className="relative max-w-5xl mx-auto text-center z-10">
             <div className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-6 animate-reveal [animation-delay:100ms] glass-pill px-3 py-1.5 rounded-full">
-              <span className="size-1.5 rounded-full bg-accent animate-pulse-glow" /> Browser-Native 3D Engine · v0.4
+              <span className="size-1.5 rounded-full bg-accent animate-pulse-glow" /> Browser-Native 3D Engine · v0.5
             </div>
             <h1 className="text-5xl sm:text-6xl md:text-8xl font-extrabold tracking-tighter text-balance mb-8 animate-reveal [animation-delay:200ms] leading-[0.95]">
               <span className="text-aurora">Infinite Depth.</span>
@@ -127,7 +136,7 @@ function Index() {
             </div>
           </div>
 
-          <div className="mt-20 max-w-7xl mx-auto relative animate-lens [animation-delay:500ms]">
+          <div className="mt-20 max-w-7xl mx-auto relative animate-lens [animation-delay:500ms] z-10">
             <div className="absolute -inset-1 bg-gradient-to-b from-white/10 to-transparent rounded-xl blur-3xl opacity-30 pointer-events-none" />
             <div className="relative w-full aspect-video rounded-xl glow-ring overflow-hidden bg-card">
               <img

@@ -78,48 +78,51 @@ function EditorPage() {
       <a href="#viewport-region" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-foreground focus:text-background focus:px-3 focus:py-1 focus:rounded">
         Skip to viewport
       </a>
-      <header className="h-12 border-b border-border flex items-center justify-between px-4 shrink-0 bg-background/80 backdrop-blur-xl">
-        <div className="flex items-center gap-6">
-          <Link to="/" className="font-mono text-xs tracking-tighter uppercase font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
+      <header className="h-14 flex items-center justify-between px-3 shrink-0 m-2 mb-0 rounded-xl liquid-glass">
+        <div className="flex items-center gap-4 pl-2">
+          <Link to="/" className="font-mono text-xs tracking-tighter uppercase font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm flex items-center gap-2">
+            <span className="size-2 rounded-full bg-accent animate-pulse-glow" />
             Infinite Studio
           </Link>
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground hidden sm:inline">
-            Untitled Scene · {objects.length} OBJ · {lights.length} LIGHT · {playing ? "LIVE" : "PAUSED"}
+          <span className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full glass-pill font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+            <span>{objects.length} OBJ</span><span className="opacity-40">·</span>
+            <span>{lights.length} LIGHT</span><span className="opacity-40">·</span>
+            <span className={playing ? "text-accent" : ""}>{playing ? "LIVE" : "PAUSED"}</span>
           </span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <button
             onClick={() => setShowShortcuts(true)}
             aria-label="Keyboard shortcuts"
-            className="p-1.5 border border-border hover:bg-white/5 transition-colors rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             title="Keyboard shortcuts (?)"
           >
             <Keyboard className="size-3.5" />
           </button>
           <button
             onClick={() => setShowTemplates((v) => !v)}
-            className="px-3 py-1 border border-border text-[10px] font-mono uppercase tracking-[0.2em] hover:bg-white/5 transition-colors rounded-sm flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="px-3 py-1.5 glass-pill rounded-full text-[10px] font-mono uppercase tracking-[0.2em] hover:bg-white/10 transition-colors flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <LayoutGrid className="size-3" aria-hidden /> Templates
           </button>
           <button
             onClick={togglePlaying}
             aria-label={playing ? "Pause animation" : "Play animation"}
-            className="p-1.5 border border-border hover:bg-white/5 transition-colors rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             title={playing ? "Pause (space)" : "Play (space)"}
           >
             {playing ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
           </button>
           <button
             onClick={exportPng}
-            className="px-3 py-1 border border-border text-[10px] font-mono uppercase tracking-[0.2em] hover:bg-white/5 transition-colors rounded-sm flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-[10px] font-mono uppercase tracking-[0.2em] font-bold hover:opacity-90 transition flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <Download className="size-3" aria-hidden /> PNG
+            <Download className="size-3" aria-hidden /> Export PNG
           </button>
           <button
             onClick={reset}
             aria-label="Reset scene"
-            className="p-1.5 border border-border hover:bg-white/5 transition-colors rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="p-2 glass-pill rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             title="Reset scene"
           >
             <RotateCcw className="size-3.5" />
@@ -127,17 +130,17 @@ function EditorPage() {
         </div>
       </header>
 
-      <div className="flex-1 flex min-h-0 relative">
-        <aside className="w-60 border-r border-border shrink-0 bg-background" aria-label="Scene tree">
+      <div className="flex-1 flex min-h-0 relative gap-2 p-2 pt-2">
+        <aside className="w-60 shrink-0 rounded-xl liquid-glass overflow-hidden" aria-label="Scene tree">
           <SceneTree />
         </aside>
 
-        <main id="viewport-region" className="flex-1 relative bg-card min-w-0" aria-label="3D viewport">
+        <main id="viewport-region" className="flex-1 relative bg-card min-w-0 rounded-xl overflow-hidden border border-border" aria-label="3D viewport">
           <Viewport />
-          <div className="absolute top-3 left-4 font-mono text-[10px] tracking-[0.2em] text-foreground/60 pointer-events-none select-none">
+          <div className="absolute top-3 left-4 font-mono text-[10px] tracking-[0.2em] text-foreground/60 pointer-events-none select-none px-2 py-1 rounded glass-pill">
             VIEWPORT_01 · DRAG TO ORBIT
           </div>
-          <div className="absolute bottom-3 right-4 font-mono text-[10px] tracking-[0.2em] text-foreground/60 pointer-events-none select-none">
+          <div className="absolute bottom-3 right-4 font-mono text-[10px] tracking-[0.2em] text-foreground/60 pointer-events-none select-none px-2 py-1 rounded glass-pill">
             WEBGL · REALTIME
           </div>
 

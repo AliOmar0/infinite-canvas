@@ -46,32 +46,6 @@ function EditorPage() {
   const [rightCollapsed, setRightCollapsed] = useState(false);
   const focusMode = leftCollapsed && rightCollapsed;
 
-  // Clear stale persisted panel layouts BEFORE the library reads them on first render
-  useState(() => {
-    if (typeof window === "undefined") return null;
-    try {
-      Object.keys(localStorage)
-        .filter((k) => k.toLowerCase().includes("panel") || k.includes("infinite-studio"))
-        .forEach((k) => localStorage.removeItem(k));
-    } catch { /* ignore */ }
-    return null;
-  });
-
-  // Backup: force panels to sane sizes on mount
-  useEffect(() => {
-    const id = requestAnimationFrame(() => {
-      try {
-        leftRef.current?.expand();
-        rightRef.current?.expand();
-        leftRef.current?.resize(22);
-        rightRef.current?.resize(22);
-      } catch { /* ignore */ }
-      setLeftCollapsed(false);
-      setRightCollapsed(false);
-    });
-    return () => cancelAnimationFrame(id);
-  }, []);
-
   const flash = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 1800);

@@ -315,7 +315,7 @@ function EditorPage() {
             collapsedSize={0}
             className="rounded-xl liquid-glass overflow-hidden"
           >
-            <div className="h-full min-w-[16rem]"><Properties /></div>
+            <div className="h-full w-full overflow-hidden"><Properties /></div>
           </Panel>
         </PanelGroup>
       </div>

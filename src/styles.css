@@ -235,3 +235,4 @@
 .animate-lens { animation: lensOpen 1.4s var(--ease-cinematic) both; }
 .animate-pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
 .animate-fade-in { animation: fadeIn 0.2s ease-out both; }
+}

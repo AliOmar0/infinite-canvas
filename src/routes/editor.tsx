@@ -210,7 +210,7 @@ function EditorPage() {
 
       <div className="flex-1 min-h-0 relative p-2 pt-2">
         <PanelGroup
-          orientation="horizontal"
+          orientation={panelOrientation}
           id="infinite-studio-v5"
           resizeTargetMinimumSize={{ fine: 20, coarse: 36 }}
           className="h-full w-full"
@@ -218,17 +218,17 @@ function EditorPage() {
           <Panel
             panelRef={leftRef}
             id="left"
-            defaultSize="24%"
-            minSize="14%"
-            maxSize="64%"
+            defaultSize={isNarrow ? "34%" : "24%"}
+            minSize={isNarrow ? "12rem" : "14%"}
+            maxSize={isNarrow ? "70%" : "64%"}
             collapsible
             collapsedSize="0%"
             className="min-w-0 rounded-xl liquid-glass overflow-hidden"
           >
             <div className="h-full w-full overflow-hidden"><SceneTree /></div>
           </Panel>
-          <ResizeHandle hidden={leftCollapsed} label="Resize scene panel" />
-          <Panel id="center" defaultSize="52%" minSize="22%" className="relative min-w-0">
+          <ResizeHandle orientation={panelOrientation} hidden={leftCollapsed} label="Resize scene panel" />
+          <Panel id="center" defaultSize={isNarrow ? "32%" : "52%"} minSize={isNarrow ? "11rem" : "22%"} className="relative min-w-0">
             <main id="viewport-region" className="absolute inset-0 bg-card rounded-xl overflow-hidden border border-border" aria-label="3D viewport">
               <Viewport />
               <div className="absolute top-3 left-4 font-mono text-[10px] tracking-[0.2em] text-foreground/60 pointer-events-none select-none px-2 py-1 rounded glass-pill">
@@ -309,13 +309,13 @@ function EditorPage() {
               )}
             </main>
           </Panel>
-          <ResizeHandle hidden={rightCollapsed} label="Resize properties panel" />
+          <ResizeHandle orientation={panelOrientation} hidden={rightCollapsed} label="Resize properties panel" />
           <Panel
             panelRef={rightRef}
             id="right"
-            defaultSize="24%"
-            minSize="16%"
-            maxSize="64%"
+            defaultSize={isNarrow ? "34%" : "24%"}
+            minSize={isNarrow ? "12rem" : "16%"}
+            maxSize={isNarrow ? "70%" : "64%"}
             collapsible
             collapsedSize="0%"
             className="min-w-0 rounded-xl liquid-glass overflow-hidden"

@@ -209,8 +209,8 @@ function EditorPage() {
             panelRef={leftRef}
             id="left"
             defaultSize="24%"
-            minSize="18rem"
-            maxSize="48%"
+            minSize="14%"
+            maxSize="64%"
             collapsible
             collapsedSize="0%"
             className="min-w-0 rounded-xl liquid-glass overflow-hidden"
@@ -218,7 +218,7 @@ function EditorPage() {
             <div className="h-full w-full overflow-hidden"><SceneTree /></div>
           </Panel>
           <ResizeHandle hidden={leftCollapsed} label="Resize scene panel" />
-          <Panel id="center" defaultSize="52%" minSize="24rem" className="relative min-w-0">
+          <Panel id="center" defaultSize="52%" minSize="22%" className="relative min-w-0">
             <main id="viewport-region" className="absolute inset-0 bg-card rounded-xl overflow-hidden border border-border" aria-label="3D viewport">
               <Viewport />
               <div className="absolute top-3 left-4 font-mono text-[10px] tracking-[0.2em] text-foreground/60 pointer-events-none select-none px-2 py-1 rounded glass-pill">
@@ -304,8 +304,8 @@ function EditorPage() {
             panelRef={rightRef}
             id="right"
             defaultSize="24%"
-            minSize="20rem"
-            maxSize="48%"
+            minSize="16%"
+            maxSize="64%"
             collapsible
             collapsedSize="0%"
             className="min-w-0 rounded-xl liquid-glass overflow-hidden"

@@ -154,6 +154,24 @@ function Index() {
           </div>
         </section>
 
+        {/* Marquee */}
+        <section aria-hidden className="border-y border-border py-5 bg-background/60 relative overflow-hidden">
+          <div className="marquee">
+            <div className="marquee-track font-mono text-[11px] uppercase tracking-[0.35em] text-muted-foreground">
+              {Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="flex gap-12 pr-12">
+                  {["WebGL 2", "PBR Materials", "Real-Time", "Aurora FX", "Procedural Textures", "Cinematic Light Rigs", "Bloom · DOF · Chroma", "60 FPS", "Zero Install"].map((w) => (
+                    <span key={w} className="flex items-center gap-12">
+                      <span className="text-foreground/80">{w}</span>
+                      <span className="text-aurora">✦</span>
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Features */}
         <section id="engine" className="py-32 px-6 border-t border-border">
           <div className="max-w-7xl mx-auto">

@@ -12,7 +12,7 @@ export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
     pages: [{ path: "/" }],
-    prerender: { enabled: true },
+    prerender: { enabled: true, autoStaticPathsDiscovery: false },
     spa: { enabled: true },
   },
   vite: {

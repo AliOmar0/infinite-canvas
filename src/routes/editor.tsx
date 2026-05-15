@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
-import { Play, Pause, Download, RotateCcw, LayoutGrid, X, Search, Keyboard } from "lucide-react";
+import { Play, Pause, Download, RotateCcw, LayoutGrid, X, Search, Keyboard, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Maximize2, Minimize2 } from "lucide-react";
 import { Viewport } from "@/components/editor/Viewport";
 import { SceneTree } from "@/components/editor/SceneTree";
 import { Properties } from "@/components/editor/Properties";

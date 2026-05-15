@@ -202,7 +202,7 @@ function EditorPage() {
           <Panel
             panelRef={leftRef}
             id="left"
-            defaultSize={20}
+            defaultSize={22}
             minSize={14}
             maxSize={34}
             collapsible
@@ -212,7 +212,7 @@ function EditorPage() {
             <div className="h-full w-full overflow-hidden"><SceneTree /></div>
           </Panel>
           <ResizeHandle hidden={leftCollapsed} />
-          <Panel id="center" minSize={30} className="relative">
+          <Panel id="center" defaultSize={56} minSize={30} className="relative">
             <main id="viewport-region" className="absolute inset-0 bg-card rounded-xl overflow-hidden border border-border" aria-label="3D viewport">
               <Viewport />
               <div className="absolute top-3 left-4 font-mono text-[10px] tracking-[0.2em] text-foreground/60 pointer-events-none select-none px-2 py-1 rounded glass-pill">

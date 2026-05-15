@@ -94,11 +94,13 @@ function Index() {
 
       <main id="main">
         {/* Hero */}
-        <section className="relative pt-36 pb-20 px-6 overflow-hidden grain">
+        <section className="relative pt-40 pb-20 px-6 overflow-hidden grain spotlight">
+          <div className="lamp-cone" aria-hidden />
+          <div className="lamp-line" aria-hidden />
           <div className="aurora-bg" aria-hidden />
           <div className="grid-bg" aria-hidden />
           <div className="relative max-w-5xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-6 animate-reveal [animation-delay:100ms] px-3 py-1 rounded-full border border-border bg-background/40 backdrop-blur">
+            <div className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-6 animate-reveal [animation-delay:100ms] glass-pill px-3 py-1.5 rounded-full">
               <span className="size-1.5 rounded-full bg-accent animate-pulse-glow" /> Browser-Native 3D Engine · v0.4
             </div>
             <h1 className="text-5xl sm:text-6xl md:text-8xl font-extrabold tracking-tighter text-balance mb-8 animate-reveal [animation-delay:200ms] leading-[0.95]">

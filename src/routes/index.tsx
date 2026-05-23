@@ -8,6 +8,7 @@ import showcase2 from "@/assets/showcase-2.jpg";
 import { TEMPLATES } from "@/lib/templates";
 import { MATERIAL_PRESETS } from "@/lib/materials";
 import { useEditor } from "@/lib/editor-store";
+import { TemplatePreview } from "@/components/editor/TemplatePreview";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -314,9 +315,9 @@ function Index() {
                   aria-label={`Load ${t.name} template`}
                 >
                   <div className="aspect-[4/3] relative overflow-hidden" style={{ background: t.background }}>
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/8 via-transparent to-black/40" />
-                    <div className="absolute inset-0 flex items-center justify-center px-3">
-                      <div className="font-mono text-sm md:text-base uppercase tracking-[0.25em] text-white/85 mix-blend-difference text-center">
+                    <TemplatePreview t={t} />
+                    <div className="absolute inset-x-0 bottom-0 px-3 py-2 bg-gradient-to-t from-black/70 to-transparent pointer-events-none">
+                      <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/90 truncate">
                         {t.name}
                       </div>
                     </div>

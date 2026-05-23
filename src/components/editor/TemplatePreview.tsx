@@ -12,47 +12,49 @@ import { getTexture } from "@/lib/textures";
  * - Auto-orbits slowly, on-demand frameloop so cost stays low when paused
  * - Reuses the same materials/lights as the editor for a true preview
  */
-export function TemplatePreview({ t }: { t: Template }) {
+export function TemplatePreview({ t, eager = false }: { t: Template; eager?: boolean }) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  const [active, setActive] = useState(eager);
   const [hovered, setHovered] = useState(false);
 
+  // Eager mode (editor template browser) mounts when visible.
   useEffect(() => {
+    if (!eager) return;
     const el = wrapRef.current;
     if (!el) return;
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           if (e.isIntersecting) {
-            setVisible(true);
+            setActive(true);
             io.disconnect();
             break;
           }
         }
       },
-      { rootMargin: "120px" },
+      { rootMargin: "200px" },
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [eager]);
 
   return (
     <div
       ref={wrapRef}
       className="absolute inset-0"
-      onMouseEnter={() => setHovered(true)}
+      onMouseEnter={() => { setHovered(true); setActive(true); }}
       onMouseLeave={() => setHovered(false)}
+      onFocus={() => setActive(true)}
       style={{ background: t.background }}
     >
-      {/* Static fallback gradient — visible until canvas mounts and paints */}
       <FallbackArt t={t} />
-      {visible && (
+      {active && (
         <Canvas
           shadows={false}
           dpr={[1, 1.5]}
           gl={{ antialias: true, alpha: true, powerPreference: "low-power" }}
-          frameloop="always"
-          className="absolute inset-0"
+          frameloop={hovered || eager ? "always" : "demand"}
+          className="absolute inset-0 transition-opacity duration-300"
           style={{ background: "transparent" }}
         >
           <SceneInner t={t} hovered={hovered} />

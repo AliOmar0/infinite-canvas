@@ -8,6 +8,7 @@ import showcase2 from "@/assets/showcase-2.jpg";
 import { TEMPLATES } from "@/lib/templates";
 import { MATERIAL_PRESETS } from "@/lib/materials";
 import { useEditor } from "@/lib/editor-store";
+import { TemplatePreview } from "@/components/editor/TemplatePreview";
 
 export const Route = createFileRoute("/")({
   component: Index,

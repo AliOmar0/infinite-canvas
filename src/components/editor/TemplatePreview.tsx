@@ -14,37 +14,60 @@ import { getTexture } from "@/lib/textures";
  */
 export function TemplatePreview({ t, eager = false }: { t: Template; eager?: boolean }) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(eager);
+  const [active, setActive] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const timer = useRef<number | null>(null);
 
-  // Eager mode (editor template browser) mounts when visible.
+  // Eager mode (editor template browser) mounts when card scrolls into view,
+  // staggered so we don't spin up 22 contexts at once.
   useEffect(() => {
     if (!eager) return;
     const el = wrapRef.current;
     if (!el) return;
+    let timeoutId: number | undefined;
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           if (e.isIntersecting) {
-            setActive(true);
+            // small jitter so multiple cards don't init in one frame
+            timeoutId = window.setTimeout(() => setActive(true), Math.random() * 250);
             io.disconnect();
             break;
           }
         }
       },
-      { rootMargin: "200px" },
+      { rootMargin: "150px" },
     );
     io.observe(el);
-    return () => io.disconnect();
+    return () => {
+      io.disconnect();
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
   }, [eager]);
+
+  const onEnter = () => {
+    setHovered(true);
+    setActive(true);
+    if (timer.current) { window.clearTimeout(timer.current); timer.current = null; }
+  };
+  const onLeave = () => {
+    setHovered(false);
+    // unmount the canvas a moment after hover ends so we don't leak GL contexts
+    if (!eager) {
+      timer.current = window.setTimeout(() => setActive(false), 600);
+    }
+  };
+
+  useEffect(() => () => { if (timer.current) window.clearTimeout(timer.current); }, []);
 
   return (
     <div
       ref={wrapRef}
       className="absolute inset-0"
-      onMouseEnter={() => { setHovered(true); setActive(true); }}
-      onMouseLeave={() => setHovered(false)}
-      onFocus={() => setActive(true)}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      onFocus={onEnter}
+      onBlur={onLeave}
       style={{ background: t.background }}
     >
       <FallbackArt t={t} />
@@ -53,11 +76,11 @@ export function TemplatePreview({ t, eager = false }: { t: Template; eager?: boo
           shadows={false}
           dpr={[1, 1.5]}
           gl={{ antialias: true, alpha: true, powerPreference: "low-power" }}
-          frameloop={hovered || eager ? "always" : "demand"}
-          className="absolute inset-0 transition-opacity duration-300"
+          frameloop="always"
+          className="absolute inset-0 animate-fade-in"
           style={{ background: "transparent" }}
         >
-          <SceneInner t={t} hovered={hovered} />
+          <SceneInner t={t} hovered={hovered || eager} />
         </Canvas>
       )}
     </div>
